@@ -1,0 +1,8 @@
+appdirs==1.4.3
+Django==1.8.9
+django-assets==0.11
+packaging==16.8
+pkg-resources==0.0.0
+pyparsing==2.2.0
+six==1.10.0
+webassets==0.11

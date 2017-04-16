@@ -1,0 +1,60 @@
+{% load sekizai_tags assets %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage">
+<head>
+    <title>{% block "title" %}Django schedule{% endblock "title" %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="schedule"/>
+
+    {% assets "schedule_css" %}
+        {% addtoblock "css" %}
+            <link media="screen" rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
+        {% endaddtoblock %}
+    {% endassets %}
+
+
+    {% assets "schedule_js" %}
+        {% addtoblock "js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endaddtoblock %}
+    {% endassets %}
+
+    {% render_block 'css' %}
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Početna</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+{% block "navigation" %}
+{% endblock "navigation" %}       
+      </ul>
+      
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+</head>
+
+<body>
+<div class="container">
+  {% block "content" %}{% endblock "content" %}
+</div>
+
+{% render_block 'js' %}
+</body>
+</html>
