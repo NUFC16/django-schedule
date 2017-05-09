@@ -13,3 +13,9 @@ def employee(request):
     return render_to_response(
         "schedule/employee.html", {}, RequestContext(request),
     )
+
+
+def index(request):
+    return render_to_response(
+        "schedule/index.html", {}, RequestContext(request),
+    )

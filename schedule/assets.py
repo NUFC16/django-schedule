@@ -10,6 +10,7 @@ schedule_less_css = Bundle(
 
 schedule_css = Bundle(
     'schedule/static/schedule/css/bootstrap.min.css',
+    #'schedule/static/schedule/css/calendar.min.css',
     # schedule_less_css,
     filters='cssmin',
     output='schedule/gen/schedule.%(version)s.css'
