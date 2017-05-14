@@ -2,15 +2,15 @@ from django_assets import Bundle, register
 from django.conf import settings
 
 schedule_less_css = Bundle(
-    'schedule/static/schedule/less/schedule.less',
+    'schedule/less/schedule.less',
     depends='schedule/less/*.less',
     filters='less',
     output='schedule/gen/style_schedule.%(version)s.css',
 )
 
 schedule_css = Bundle(
-    'schedule/static/schedule/css/bootstrap.min.css',
-    #'schedule/static/schedule/css/calendar.min.css',
+    'schedule/css/bootstrap.min.css',
+    'schedule/lib/fullcalendar3/dist/fullcalendar.css',
     # schedule_less_css,
     filters='cssmin',
     output='schedule/gen/schedule.%(version)s.css'
@@ -24,8 +24,10 @@ uncompressed_js = [
 ]
 
 schedule_js = Bundle(
-    'schedule/static/schedule/lib/jquery/jquery-2.2.0.js',
-    'schedule/static/schedule/js/bootstrap.js',
+    'schedule/lib/moment/moment.js',
+    'schedule/lib/jquery/jquery-2.2.0.js',
+    'schedule/lib/fullcalendar3/dist/fullcalendar.js',
+    'schedule/js/bootstrap.js',
     *uncompressed_js,
     filters='jsmin',
     output='schedule/gen/no-out.min.js'
@@ -38,8 +40,8 @@ schedule_js_minify = Bundle(
 )
 
 schedule_js_min = Bundle(
-    'schedule/static/schedule/lib/jquery/jquery-2.2.0.min.js',
-    'schedule/static/schedule/js/bootstrap.min.js',
+    'schedule/js/bootstrap.min.js',
+    'schedule/lib/jquery/jquery-2.2.0.min.js',
     schedule_js_minify,
     output='schedule/gen/schedule.min.%(version)s.js'
 )

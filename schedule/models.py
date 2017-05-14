@@ -1,7 +1,9 @@
 from django.db import models
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 import datetime
+import pdb
 
 
 class Staff(models.Model):
@@ -39,6 +41,33 @@ class Week_shift(models.Model):
     sunday = models.ForeignKey(Day_shift, null=True, related_name='+')
     week_group = models.ForeignKey(Group)
 
+    def get_day(self, x):
+        return {
+            0: self.monday,
+            1: self.thuesday,
+            2: self.wednesday,
+            3: self.thursday,
+            4: self.friday,
+            5: self.saturday,
+            6: self.sunday,
+        }.get(x, 6)
+
+    def change_day(self, x, val):
+        if x == 0:
+            self.monday = val
+        elif x == 1:
+            self.thuesday = val
+        elif x == 2:
+            self.wednesday = val
+        elif x == 3:
+            self.thursday = val
+        elif x == 4:
+            self.friday = val
+        elif x == 5:
+            self.saturday = val
+        elif x == 6:
+            self.sunday = val
+
     def __unicode__(self):
         return 'Week_shift ' + self.week_group.group_name + ' ' + str(self.id)
 
@@ -55,28 +84,32 @@ class User(models.Model):
 
 
 class Schedule(models.Model):
+    schedule = models.ForeignKey(
+        "self",
+        related_name='+',
+        verbose_name=_('Parent schedule'),
+        null=True,
+        blank=True
+    )
     date = models.DateField()
     time_from = models.TimeField(null=True, blank=True)
     time_until = models.TimeField(null=True, blank=True)
     user = models.ForeignKey(User)
 
-    def switch_case(self, x):
-        return {
-            0: self.user.user_shift.monday,
-            1: self.user.user_shift.thuesday,
-            2: self.user.user_shift.wednesday,
-            3: self.user.user_shift.thursday,
-            4: self.user.user_shift.friday,
-            5: self.user.user_shift.saturday,
-            6: self.user.user_shift.sunday,
-        }.get(x, 6)
-
     def save(self, *args, **kwargs):
         if (self.time_from == None or self.time_until == None):
-            temp_shift = self.switch_case(self.date.weekday())
+            temp_shift = self.user.user_shift.get_day(self.date.weekday())
 
             self.time_from = temp_shift.time_from
             self.time_until = temp_shift.time_until
+        # u slucaju promjene stanja - followup
+        try:
+            new_followup = Schedule.objects.get(pk=self.pk)
+            new_followup.pk = None
+            new_followup.schedule = self
+            new_followup.save()
+        except:
+            pass
         # Call the "real" save() method.
         super(Schedule, self).save(*args, **kwargs)
 
@@ -85,32 +118,41 @@ class Schedule(models.Model):
 
 
 class Swap(models.Model):
-    employee_1 = models.ForeignKey(User, related_name='+')
-    employee_2 = models.ForeignKey(User, related_name='+')
     schedule_1 = models.ForeignKey(Schedule, related_name='+')
     schedule_2 = models.ForeignKey(Schedule, related_name='+')
     date = models.DateField()
+    permanent = models.BooleanField(default=False)
     status = models.BooleanField(default=False)
 
+    def revert(self):
+        self.save()
+        self.delete()
+
     def save(self, *args, **kwargs):
-        swp1 = Schedule.objects.get(pk=self.schedule_1.pk)
-        swp1.user = self.employee_2
-        swp1.save()
-        swp2 = Schedule.objects.get(pk=self.schedule_2.pk)
-        swp2.user = self.employee_1
-        swp2.save()
+        # zamjena u schedule kako bi promjena bila vidljiva u rasporedu
+        sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
+        sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
+
+        if self.permanent == True:
+            shift_1 = sch_1.user.user_shift
+            shift_2 = sch_2.user.user_shift
+
+            day_1 = shift_1.get_day(sch_1.date.weekday())
+            day_2 = shift_2.get_day(sch_2.date.weekday())
+
+            shift_1.chang_e_day(sch1.date.weekday(), day_2)
+            shift_1.save()
+            shift_2.change_day(sch_2.date.weekday(), day_1)
+            shift_2.save()
+
+        sch_1.user, _ sch_2.user = sch_2.user, sch1.user
+        sch_1.save()
+        sch_2.save()
+        # zapis dosadasnjeg stanja (zbog mogucnosti reverse)
+        self.schedule_1 = Schedule.objects.get(schedule=self.schedule_1.pk)
+        self.schedule_2 = Schedule.objects.get(schedule=self.schedule_2.pk)
+
         super(Swap, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Swap ' + self.date.strftime('%m/%d/%Y') + ' ' + str(self.id)
-
-
-class Permanent_swap(models.Model):
-    employee_1 = models.ForeignKey(User, related_name='+')
-    employee_2 = models.ForeignKey(User, related_name='+')
-    day_shift_1 = models.ForeignKey(Day_shift, related_name='+')
-    day_shift_2 = models.ForeignKey(Day_shift, related_name='+')
-    status = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        return 'Permanent swap ' + self.date.strftime('%m/%d/%Y') + ' ' + str(self.id)

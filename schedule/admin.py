@@ -3,6 +3,6 @@ from schedule.models import *
 
 
 all_models = [Staff, User, Group, Day_shift,
-              Week_shift, Swap, Schedule, Permanent_swap]
+              Week_shift, Swap, Schedule]
 
 admin.site.register(all_models)
