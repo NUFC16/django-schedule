@@ -96,20 +96,22 @@ class Schedule(models.Model):
     time_until = models.TimeField(null=True, blank=True)
     user = models.ForeignKey(User)
 
-    def save(self, *args, **kwargs):
-        if (self.time_from == None or self.time_until == None):
+    def save(self, make_instance=False, *args, **kwargs):
+        if self.time_from == None or self.time_until == None:
             temp_shift = self.user.user_shift.get_day(self.date.weekday())
 
             self.time_from = temp_shift.time_from
             self.time_until = temp_shift.time_until
-        # u slucaju promjene stanja - followup
-        try:
-            new_followup = Schedule.objects.get(pk=self.pk)
-            new_followup.pk = None
-            new_followup.schedule = self
-            new_followup.save()
-        except:
-            pass
+
+        if make_instance == True:
+            # u slucaju promjene stanja - followup
+            try:
+                new_followup = Schedule.objects.get(pk=self.pk)
+                new_followup.pk = None
+                new_followup.schedule = self
+                new_followup.save()
+            except:
+                pass
         # Call the "real" save() method.
         super(Schedule, self).save(*args, **kwargs)
 
@@ -125,10 +127,10 @@ class Swap(models.Model):
     status = models.BooleanField(default=False)
 
     def revert(self):
-        self.save()
+        self.save(make_instance=False)
         self.delete()
 
-    def save(self, *args, **kwargs):
+    def save(self, make_instance=True, *args, **kwargs):
         # zamjena u schedule kako bi promjena bila vidljiva u rasporedu
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
@@ -140,17 +142,20 @@ class Swap(models.Model):
             day_1 = shift_1.get_day(sch_1.date.weekday())
             day_2 = shift_2.get_day(sch_2.date.weekday())
 
-            shift_1.chang_e_day(sch1.date.weekday(), day_2)
+            shift_1.change_day(sch_1.date.weekday(), day_2)
             shift_1.save()
             shift_2.change_day(sch_2.date.weekday(), day_1)
             shift_2.save()
 
-        sch_1.user, _ sch_2.user = sch_2.user, sch1.user
-        sch_1.save()
-        sch_2.save()
-        # zapis dosadasnjeg stanja (zbog mogucnosti reverse)
-        self.schedule_1 = Schedule.objects.get(schedule=self.schedule_1.pk)
-        self.schedule_2 = Schedule.objects.get(schedule=self.schedule_2.pk)
+        sch_1.user, sch_2.user = sch_2.user, sch_1.user
+        sch_1.save(make_instance=make_instance)
+        sch_2.save(make_instance=make_instance)
+        # save dosadasnjeg stanja ako se koristi reverse
+        if make_instance == False:
+            follow_schedule_1 = Schedule.objects.get(schedule=sch_1)
+            follow_schedule_2 = Schedule.objects.get(schedule=sch_2)
+            follow_schedule_1.delete()
+            follow_schedule_2.delete()
 
         super(Swap, self).save(*args, **kwargs)
 
