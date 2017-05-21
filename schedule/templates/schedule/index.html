@@ -3,9 +3,40 @@
 {% block "navigation" %}
 {% endblock "navigation" %} 
 
-{% block "content" %}
-
+{% block "content" %} 
   <div id='calendar'></div>
 
 
 {% endblock "content" %}
+
+{% block "js" %}
+<script type="text/javascript">
+  $(document).ready(function() {
+    
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay,listWeek'
+      },
+      defaultDate: '2017-05-12',
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+      eventLimit: true, // allow "more" link when too many events
+      events: [
+      {% for event in events %}
+        {
+          id: {{event.id}},
+          title: '{{event.title}}',
+          start: '{{event.time_from}}',
+          end: '{{event.time_until}}',
+          url: 'http://google.com/', {# TODO: link na profil ili tako nesto #}
+        },
+      {% endfor %}
+      ]
+    });
+    
+  });
+
+</script>
+{% endblock "js" %}

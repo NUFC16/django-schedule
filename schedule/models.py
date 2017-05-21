@@ -1,4 +1,5 @@
 from django.db import models
+from django.dispatch import receiver
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -79,8 +80,24 @@ class User(models.Model):
     user_group = models.ForeignKey(Group, null=True)
     user_shift = models.ForeignKey(Week_shift, null=True)
 
+    def generate_schedule(self):
+        a = datetime.datetime.today()
+        numdays = 60
+        for x in range(0, numdays):
+            date = a + datetime.timedelta(days=x)
+            try:
+                Schedule.objects.get(date=date, user=self)
+            except:
+                Schedule.objects.create(date=date, user=self)
+
     def __unicode__(self):
         return self.first_name + ' ' + self.last_name
+
+
+@receiver(models.signals.post_save, sender=User)
+def execute_after_save(sender, instance, created, *args, **kwargs):
+    if created:
+        instance.generate_schedule()
 
 
 class Schedule(models.Model):
@@ -114,6 +131,12 @@ class Schedule(models.Model):
                 pass
         # Call the "real" save() method.
         super(Schedule, self).save(*args, **kwargs)
+
+    def get_string_from(self):
+        return self.date.strftime('%Y-%m-%d') + 'T' + self.time_from.strftime('%H:%M:%S')
+
+    def get_string_until(self):
+        return self.date.strftime('%Y-%m-%d') + 'T' + self.time_until.strftime('%H:%M:%S')
 
     def __unicode__(self):
         return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.first_name + ' ' + self.user.last_name
