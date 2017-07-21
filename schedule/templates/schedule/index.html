@@ -1,4 +1,5 @@
 {% extends "schedule/base.html" %}
+{% load i18n %}
 
 {% block "navigation" %}
 {% endblock "navigation" %} 
@@ -26,10 +27,10 @@
       events: [
       {% for event in events %}
         {
-          id: {{event.id}},
-          title: '{{event.title}}',
-          start: '{{event.time_from}}',
-          end: '{{event.time_until}}',
+          id: {{ event.id }},
+          title: '{{ event.title }}',
+          start: '{{ event.time_from }}',
+          end: '{{ event.time_until }}',
           url: 'http://google.com/', {# TODO: link na profil ili tako nesto #}
         },
       {% endfor %}

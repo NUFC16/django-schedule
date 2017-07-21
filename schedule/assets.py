@@ -9,6 +9,7 @@ schedule_less_css = Bundle(
 )
 
 schedule_css = Bundle(
+    'schedule/css/login_custom.css',
     'schedule/css/bootstrap.min.css',
     'schedule/lib/fullcalendar3/dist/fullcalendar.css',
     # schedule_less_css,

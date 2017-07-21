@@ -17,7 +17,7 @@ def make_events(users):
             event_list.append({"id": schedule.id,
                                "title": user.first_name + ' ' + user.last_name,
                                "time_from": schedule.get_string_from(),
-                               "time_until": schedule.get_string_until
+                               "time_until": schedule.get_string_until()
                                })
     return event_list
 
