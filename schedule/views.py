@@ -2,29 +2,16 @@ from django.shortcuts import render_to_response, render
 from django.template.context import RequestContext
 from django.core.urlresolvers import resolve
 
-from schedule.models import Schedule, User, Group
-import datetime
-import pdb
+from schedule.models import User_profile, Group
+from django.contrib.auth.decorators import login_required
 
-group = Group.objects.first()
+from schedule.utils import *
 
-
-def make_events(users):
-    event_list = []
-    for user in users:
-        schedules = Schedule.objects.filter(user=user)
-        for schedule in schedules:
-            event_list.append({"id": schedule.id,
-                               "title": user.first_name + ' ' + user.last_name,
-                               "time_from": schedule.get_string_from(),
-                               "time_until": schedule.get_string_until()
-                               })
-    return event_list
-
-
+@login_required
 def index(request):
-    users = User.objects.filter(user_group=group)
-    # generira se raspored unaprijed ako nije vec postojeci
+    group = User_profile.objects.get(user=request.user).user_group
+    users = User_profile.objects.filter(user_group=group)
+    # generate schedule in advance if it does not exist
     for user in users:
         user.generate_schedule()
     events = make_events(users)

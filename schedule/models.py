@@ -1,24 +1,16 @@
 from django.db import models
 from django.dispatch import receiver
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 import datetime
-import pdb
-
-
-class Staff(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    # password = models.CharField(widget=forms.PasswordInput)
-
-    def __unicode__(self):
-        return self.first_name + ' ' + self.last_name
 
 
 class Group(models.Model):
     group_name = models.CharField(max_length=30)
-    supervisor = models.ForeignKey(Staff)
+    supervisor = models.ForeignKey(User, related_name='+',)
 
     def __unicode__(self):
         return self.group_name
@@ -73,10 +65,8 @@ class Week_shift(models.Model):
         return 'Week_shift ' + self.week_group.group_name + ' ' + str(self.id)
 
 
-class User(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    # password = models.CharField(widget=forms.PasswordInput)
+class User_profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_group = models.ForeignKey(Group, null=True)
     user_shift = models.ForeignKey(Week_shift, null=True)
 
@@ -91,10 +81,21 @@ class User(models.Model):
                 Schedule.objects.create(date=date, user=self)
 
     def __unicode__(self):
-        return self.first_name + ' ' + self.last_name
+        return self.user.first_name + ' ' + self.user.last_name
 
 
-@receiver(models.signals.post_save, sender=User)
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        User_profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.user_profile.save()
+
+
+@receiver(models.signals.post_save, sender=User_profile)
 def execute_after_save(sender, instance, created, *args, **kwargs):
     if created:
         instance.generate_schedule()
@@ -111,7 +112,7 @@ class Schedule(models.Model):
     date = models.DateField()
     time_from = models.TimeField(null=True, blank=True)
     time_until = models.TimeField(null=True, blank=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User_profile)
 
     def save(self, make_instance=False, *args, **kwargs):
         if self.time_from == None or self.time_until == None:
@@ -121,7 +122,7 @@ class Schedule(models.Model):
             self.time_until = temp_shift.time_until
 
         if make_instance == True:
-            # u slucaju promjene stanja - followup
+            # In case of change - followup
             try:
                 new_followup = Schedule.objects.get(pk=self.pk)
                 new_followup.pk = None
@@ -139,7 +140,7 @@ class Schedule(models.Model):
         return self.date.strftime('%Y-%m-%d') + 'T' + self.time_until.strftime('%H:%M:%S')
 
     def __unicode__(self):
-        return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.first_name + ' ' + self.user.last_name
+        return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.user.first_name + ' ' + self.user.user.last_name
 
 
 class Swap(models.Model):
@@ -154,7 +155,7 @@ class Swap(models.Model):
         self.delete()
 
     def save(self, make_instance=True, *args, **kwargs):
-        # zamjena u schedule kako bi promjena bila vidljiva u rasporedu
+        # Swap schedules(class) which enables change to be visible in real schedule
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
 
@@ -173,7 +174,7 @@ class Swap(models.Model):
         sch_1.user, sch_2.user = sch_2.user, sch_1.user
         sch_1.save(make_instance=make_instance)
         sch_2.save(make_instance=make_instance)
-        # save dosadasnjeg stanja ako se koristi reverse
+        # save current stati if reverse is used
         if make_instance == False:
             follow_schedule_1 = Schedule.objects.get(schedule=sch_1)
             follow_schedule_2 = Schedule.objects.get(schedule=sch_2)
