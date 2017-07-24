@@ -19,3 +19,10 @@ def index(request):
         "users": users,
         "events": events,
     })
+
+@login_required
+def employee_view(request, employee_id):
+    user = User_profile.objects.get(pk=employee_id)
+    return render(request, "schedule/employee_info.html", {
+        "user": user,
+    })

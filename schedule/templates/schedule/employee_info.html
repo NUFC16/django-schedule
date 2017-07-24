@@ -1,0 +1,60 @@
+{% extends "schedule/base.html" %}
+{% load i18n %}
+
+{% block "content" %} 
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">Sheena Shrestha</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://babyinfoforyou.com/wp-content/uploads/2014/10/avatar-300x300.png" class="img-circle img-responsive"> </div>
+      <div class=" col-md-9 col-lg-9 "> 
+        <table class="table table-user-information">
+          <tbody>
+            <tr>
+              <td>{% trans "Name" %}:</td>
+              <td>{{ user.user.first_name }}</td>
+            </tr>
+
+            <tr>
+              <td>{% trans "Last name" %}:</td>
+              <td>{{ user.user.last_name }}</td>
+            </tr>
+
+            <tr>
+              <td>{% trans "Date of birth" %}:</td>
+              <td>01/24/1988</td>
+            </tr>
+
+            <tr>
+              <td>{% trans "Gender" %}:</td>
+              <td>Female</td>
+            </tr>
+
+            <tr>
+              <td>{% trans "Date of employment" %}:</td>
+              <td>1.1.1995</td>
+            </tr>
+
+            <tr>
+              <td>{% trans "Number of hours this month" %}:</td>
+              <td>124</td>
+            </tr>
+
+            <tr>
+              <td>{% trans "Calculated paycheck" %}:</td>
+              <td>3400.45 kn</td>    
+            </tr>
+           
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="panel-footer">
+  {# aditional action like edit, and swap schedules #}
+  </div>
+  
+</div>
+{% endblock "content" %}

@@ -2,7 +2,11 @@
 {% load i18n %}
 
 {% block "navigation" %}
+  <li><a href="#">Dodaj djelatnika</a></li>
+  <li><a href="#">Dodaj grupu</a></li>
+  <li><a href="#">Pregled grupa i smjena</a></li>
 {% endblock "navigation" %} 
+
 
 {% block "content" %} 
   <div id='calendar'></div>
@@ -31,7 +35,7 @@
           title: '{{ event.title }}',
           start: '{{ event.time_from }}',
           end: '{{ event.time_until }}',
-          url: 'http://google.com/', {# TODO: link na profil ili tako nesto #}
+          url: '{{ event.profile_url }}', {# TODO: link na profil ili tako nesto #}
         },
       {% endfor %}
       ]
