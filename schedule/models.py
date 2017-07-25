@@ -67,7 +67,7 @@ class Week_shift(models.Model):
 
 class User_profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_group = models.ForeignKey(Group, null=True)
+    user_group = models.ManyToManyField(Group)
     user_shift = models.ForeignKey(Week_shift, null=True)
 
     def generate_schedule(self):

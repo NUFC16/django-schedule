@@ -2,14 +2,15 @@
 {% load i18n %}
 
 {% block "navigation" %}
-  <li><a href="#">Dodaj djelatnika</a></li>
-  <li><a href="#">Dodaj grupu</a></li>
+  <li><a href="#">Dodaj djelatnika<span class="glyphicon glyphicon-plus"></span></a></li>
+  <li><a href="#">Dodaj grupu<span class="glyphicon glyphicon-plus"></span></a></li>
   <li><a href="#">Pregled grupa i smjena</a></li>
 {% endblock "navigation" %} 
 
 
 {% block "content" %} 
-  <div id='calendar'></div>
+
+<div id='calendar'></div>
 
 
 {% endblock "content" %}
@@ -24,7 +25,7 @@
         center: 'title',
         right: 'month,agendaWeek,agendaDay,listWeek'
       },
-      defaultDate: '2017-05-12',
+      /*defaultDate: '2017-05-12',*/
       navLinks: true, // can click day/week names to navigate views
       editable: true,
       eventLimit: true, // allow "more" link when too many events
@@ -35,7 +36,8 @@
           title: '{{ event.title }}',
           start: '{{ event.time_from }}',
           end: '{{ event.time_until }}',
-          url: '{{ event.profile_url }}', {# TODO: link na profil ili tako nesto #}
+          url: '{{ event.profile_url }}',
+          color: '{{ event.color }}',
         },
       {% endfor %}
       ]
