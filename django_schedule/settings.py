@@ -14,7 +14,10 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 from django_assets.settings import ASSETS_DEBUG
 
+
 ASSETS_DEBUG = True
+
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -108,13 +111,33 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+SITE_ROOT = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+
+# -------------------------------- Static -------------------------------------
+
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
 
 STATIC_URL = '/static/'
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/")]
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/")]
 
 # login redirect
 LOGIN_URL          = 'login'
 LOGOUT_URL         = 'logout'
 LOGIN_REDIRECT_URL = 'index'
+
+# ------------------------------- Django Assets -------------------------------
+
+# A staticfiles finder that will serve from ASSETS_ROOT in DEBUG mode
+STATICFILES_FINDERS += ('django_assets.finders.AssetsFinder',)
+
+# do not use cache when rebuilding assets
+# ASSETS_CACHE = False
+
+#ASSETS_URL_EXPIRE = False
