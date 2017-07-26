@@ -92,12 +92,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.user_profile.save()
+    if instance.user_profile.user_shift:
+        instance.user_profile.save()
 
 
 @receiver(models.signals.post_save, sender=User_profile)
 def execute_after_save(sender, instance, created, *args, **kwargs):
-    if created:
+    if not created:
         instance.generate_schedule()
 
 
