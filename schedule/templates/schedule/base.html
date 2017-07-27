@@ -38,6 +38,11 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
 {% block "navigation" %}
+      {% if request.user.is_active and request.user.is_staff %}
+        <li><a href="{% url 'add_user_view' %}">Dodaj djelatnika</a></li>
+        <li><a href="#">Dodaj grupu</a></li>
+        <li><a href="#">Pregled grupa i smjena</a></li>
+      {% endif %}
 {% endblock "navigation" %}       
       </ul>
     <ul class="nav navbar-nav navbar-right">
