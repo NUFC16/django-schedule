@@ -1,10 +1,6 @@
 {% extends "schedule/base.html" %}
 {% load i18n %}
 
-{% block "navigation" %}
-{% endblock "navigation" %} 
-
-
 {% block "content" %} 
 
 <div id='calendar'></div>
@@ -22,7 +18,7 @@
         center: 'title',
         right: 'month,agendaWeek,agendaDay,listWeek'
       },
-      /*defaultDate: '2017-05-12',*/
+      /*defaultDate: '2017-07-12',*/
       navLinks: true, // can click day/week names to navigate views
       editable: true,
       eventLimit: true, // allow "more" link when too many events

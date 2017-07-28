@@ -1,11 +1,14 @@
 {% extends "schedule/base.html" %}
+{% load i18n crispy_forms_tags sekizai_tags %}
 
+{% crispy UserForm UserForm.helper %}
+{% crispy UserProfileForm UserProfileForm.helper %}
 
 {% block "content" %} 
-  <form method="post">
+  <form class="uniForm" method="post">
     {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    <button type="submit">Save changes</button>
+    {% crispy user_form %}
+    {% crispy profile_form %}
+    <button class="btn btn-primary" type="submit">{% trans "Add user" %}</button>
   </form>
 {% endblock "content" %}

@@ -38,7 +38,7 @@ def employee_view(request, employee_id):
 @login_required
 def add_user(request):
     if request.method == 'POST':
-        user_form = UserForm(request.POST)
+        user_form = UserForm(request.POST, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(request.POST)
         if user_form.is_valid() and profile_form.is_valid():
             user_data = user_form.cleaned_data
@@ -59,7 +59,7 @@ def add_user(request):
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = UserForm()
+        user_form = UserForm(is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm()
     return render(request, 'schedule/add_user.html', {
         'user_form': user_form,
