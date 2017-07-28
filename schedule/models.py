@@ -76,7 +76,7 @@ class Week_shift(models.Model):
 
 class User_profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_group = models.ManyToManyField(Group)
+    user_groups = models.ManyToManyField(Group)
     user_shift = models.ForeignKey(Week_shift, null=True)
 
     def generate_schedule(self):
@@ -101,7 +101,7 @@ def update_supervisor(sender, instance, created, **kwargs):
             new_supervisor = User_profile.objects.get(user=instance.supervisor)
         except:
             return
-        new_supervisor.user_group.add(instance)
+        new_supervisor.user_groups.add(instance)
         new_supervisor.save()
 
         try:
@@ -109,7 +109,7 @@ def update_supervisor(sender, instance, created, **kwargs):
                 user=instance.old_supervisor)
         except:
             return
-        old_supervisor.user_group.remove(instance)
+        old_supervisor.user_groups.remove(instance)
         old_supervisor.save()
 
 

@@ -91,7 +91,7 @@ class UserProfileForm(forms.ModelForm):
         self.helper.render_unmentioned_fields = False
         self.helper.layout = Layout(
             Div(
-                'user_group',
+                'user_groups',
                 'user_shift',
                 css_class='well the-fieldset row'
             ),
@@ -99,4 +99,4 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = User_profile
-        fields = ('user_group', 'user_shift')
+        fields = ('user_groups', 'user_shift')

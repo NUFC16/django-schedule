@@ -15,8 +15,8 @@ from schedule.utils import *
 
 @login_required
 def index(request):
-    groups = User_profile.objects.get(user=request.user).user_group
-    users = User_profile.objects.filter(user_group__in=groups.all())
+    groups = User_profile.objects.get(user=request.user).user_groups
+    users = User_profile.objects.filter(user_groups__in=groups.all())
     # generate schedule in advance if it does not exist
     for user in users:
         user.generate_schedule()
@@ -37,9 +37,15 @@ def employee_view(request, employee_id):
 
 @login_required
 def add_user(request):
+    # Dont allow ordinary user to create users
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
     if request.method == 'POST':
-        user_form = UserForm(request.POST, is_superuser=request.user.is_superuser)
+        user_form = UserForm(
+            request.POST, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(request.POST)
+
         if user_form.is_valid() and profile_form.is_valid():
             user_data = user_form.cleaned_data
             profile_data = profile_form.cleaned_data
@@ -50,7 +56,7 @@ def add_user(request):
                 password=user_data['password1'],
             )
             up = User_profile.objects.get(user=u)
-            up.user_group = profile_data['user_group']
+            up.user_groups = profile_data['user_groups']
             up.user_shift = profile_data['user_shift']
             up.save()
             messages.success(request, _(
@@ -61,13 +67,25 @@ def add_user(request):
     else:
         user_form = UserForm(is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm()
-    return render(request, 'schedule/add_user.html', {
-        'user_form': user_form,
-        'profile_form': profile_form
+    return render(request, "schedule/add_user.html", {
+        "user_form": user_form,
+        "profile_form": profile_form
     })
+
 
 @login_required
 def groups_and_people(request):
+    # Dont allow ordinary user to manage groups and people
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
 
-    return render(request, 'schedule/overview.html', {
+    # get all groups user is in
+    groups = User_profile.objects.get(user=request.user).user_groups
+    # get all people user is superior and dont show logged user
+    employees = User_profile.objects.filter(
+        user_groups__in=groups.all()).distinct().exclude(user=request.user)
+
+    return render(request, "schedule/overview.html", {
+        "groups": groups,
+        "employees": employees,
     })

@@ -1,2 +1,77 @@
 {% extends "schedule/base.html" %}
 {% load sekizai_tags i18n %}
+
+
+{% block "content" %} 
+
+{# List of employees #}
+<table class="table table-striped">
+
+  <h1>{% trans "People" %}
+  {# Button for adding users #}
+  <a href="{% url 'add_user_view' %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add user' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
+  </h1>
+    <thead>
+      <tr>
+        <th class="text-center">{% trans "First and last name" %}</th>
+        <th class="text-center">{% trans "Groups" %}</th>
+        <th class="text-center">{% trans "Number of hours(month)" %}</th>
+        <th class="text-center">{% trans "Employee shift" %}</th>
+        <th class="text-center">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody class="text-center">
+      {% for employee in employees %}
+        <tr>
+          <td>
+            <a href="{% url 'employee_view' employee_id=employee.id %}">{{ employee.user.first_name }} {{ employee.user.last_name }}</a>
+          </td>
+          <td>
+            {% for group in employee.user_groups.all %}
+              {{ group }}<br>
+            {% endfor %}
+          </td>
+          <td>123(dummy)</td>
+          <td>{{ employee.user_shift }}</td>
+          <td><a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit user' %}"><span class="glyphicon glyphicon-pencil"></span></button></a></td>
+        </tr>
+      {% endfor %}
+   </tbody>
+  </table>
+
+{# List of groups #}
+  <h1>{% trans "Groups" %}
+  {# Button for adding groups #}
+  <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add group' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
+  </h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th class="text-center">{% trans "Title" %}</th>
+        <th class="text-center">{% trans "Number of members" %}</th>
+        <th class="text-center">{% trans "Shifts" %}</th>
+        <th class="text-center">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody class="text-center">
+      {% for group in groups.all %}
+        <tr>
+          <td>{{ group }}</td>
+          <td>123</td>
+          <td>
+          {# TODO: link on shift which enables shift edit #}
+            {% for shift in group.week_shift_set.all %}
+              {{ shift }}<br>
+            {% endfor %}
+          </td>
+          <td>
+          {# Add new shift #}
+          <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit group' %}">Add new shift<span class="glyphicon glyphicon-plus-sign divider-left"></span></button></a>
+          {# Edit group #}
+          <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit group' %}"><span class="glyphicon glyphicon-pencil"></span></button></a></td>
+        </tr>
+      {% endfor %}
+   </tbody>
+  </table>
+  
+{% endblock "content" %}
