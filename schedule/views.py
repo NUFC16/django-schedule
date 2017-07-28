@@ -15,8 +15,8 @@ from schedule.utils import *
 
 @login_required
 def index(request):
-    group = User_profile.objects.get(user=request.user).user_group
-    users = User_profile.objects.filter(user_group__in=group.all())
+    groups = User_profile.objects.get(user=request.user).user_group
+    users = User_profile.objects.filter(user_group__in=groups.all())
     # generate schedule in advance if it does not exist
     for user in users:
         user.generate_schedule()
@@ -64,4 +64,10 @@ def add_user(request):
     return render(request, 'schedule/add_user.html', {
         'user_form': user_form,
         'profile_form': profile_form
+    })
+
+@login_required
+def groups_and_people(request):
+
+    return render(request, 'schedule/overview.html', {
     })

@@ -12,19 +12,28 @@ class Group(models.Model):
     group_name = models.CharField(max_length=30)
     supervisor = models.ForeignKey(User, related_name='+',)
 
+    def __init__(self, *args, **kwargs):
+        super(Group, self).__init__(*args, **kwargs)
+        if hasattr(self, 'supervisor'):
+            self.old_supervisor = self.supervisor
+
+    def get_members():
+        return self.user_profile_set.all()
+
     def __unicode__(self):
         return self.group_name
 
 
 class Day_shift(models.Model):
-    time_from = models.TimeField()
-    time_until = models.TimeField()
+    time_from = models.TimeField(null=True, blank=True)
+    time_until = models.TimeField(null=True, blank=True)
 
     def __unicode__(self):
         return 'Day_shift ' + str(self.time_from.hour) + '-' + str(self.time_until.hour)
 
 
 class Week_shift(models.Model):
+    name = models.CharField(max_length=30)
     monday = models.ForeignKey(Day_shift, null=True, related_name='+')
     thuesday = models.ForeignKey(Day_shift, null=True, related_name='+')
     wednesday = models.ForeignKey(Day_shift, null=True, related_name='+')
@@ -62,7 +71,7 @@ class Week_shift(models.Model):
             self.sunday = val
 
     def __unicode__(self):
-        return 'Week_shift ' + self.week_group.group_name + ' ' + str(self.id)
+        return self.name
 
 
 class User_profile(models.Model):
@@ -82,6 +91,26 @@ class User_profile(models.Model):
 
     def __unicode__(self):
         return self.user.first_name + ' ' + self.user.last_name
+
+
+@receiver(post_save, sender=Group)
+def update_supervisor(sender, instance, created, **kwargs):
+    # if instance is created
+    if instance:
+        try:
+            new_supervisor = User_profile.objects.get(user=instance.supervisor)
+        except:
+            return
+        new_supervisor.user_group.add(instance)
+        new_supervisor.save()
+
+        try:
+            old_supervisor = User_profile.objects.get(
+                user=instance.old_supervisor)
+        except:
+            return
+        old_supervisor.user_group.remove(instance)
+        old_supervisor.save()
 
 
 @receiver(post_save, sender=User)
@@ -156,7 +185,8 @@ class Swap(models.Model):
         self.delete()
 
     def save(self, make_instance=True, *args, **kwargs):
-        # Swap schedules(class) which enables change to be visible in real schedule
+        # Swap schedules(class) which enables change to be visible in real
+        # schedule
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
 
