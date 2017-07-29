@@ -95,7 +95,7 @@ class User_profile(models.Model):
 
 @receiver(post_save, sender=Group)
 def update_supervisor(sender, instance, created, **kwargs):
-    # if instance is created
+    # if instance is created and supervisor is changed
     if instance:
         try:
             new_supervisor = User_profile.objects.get(user=instance.supervisor)
@@ -104,13 +104,15 @@ def update_supervisor(sender, instance, created, **kwargs):
         new_supervisor.user_groups.add(instance)
         new_supervisor.save()
 
-        try:
-            old_supervisor = User_profile.objects.get(
-                user=instance.old_supervisor)
-        except:
-            return
-        old_supervisor.user_groups.remove(instance)
-        old_supervisor.save()
+        # If first created old supervisor will be same as new
+        if instance.supervisor != instance.old_supervisor:
+            try:
+                old_supervisor = User_profile.objects.get(
+                    user=instance.old_supervisor)
+            except:
+                return
+            old_supervisor.user_groups.remove(instance)
+            old_supervisor.save()
 
 
 @receiver(post_save, sender=User)

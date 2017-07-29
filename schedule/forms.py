@@ -1,10 +1,10 @@
 from django import forms
-from schedule.models import User_profile
+from schedule.models import User_profile, Group
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Div, HTML, Field
+from crispy_forms.layout import Layout, Submit, Div, HTML, Field, Submit
 
 
 class UserForm(forms.ModelForm):
@@ -40,14 +40,14 @@ class UserForm(forms.ModelForm):
                 css_class='well the-fieldset row'
             ),
         )
-        element=None
+        element = None
         if superuser:
             element = Div(
                 'is_staff',
                 'is_superuser',
                 css_class='col-sm-6'
             )
-        else:  
+        else:
             element = Div(
                 Field('is_staff', readonly=True, disabled=True),
                 Field('is_superuser', readonly=True, disabled=True),
@@ -100,3 +100,56 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User_profile
         fields = ('user_groups', 'user_shift')
+
+
+class EditUserForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        super(EditUserForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-4'
+        self.helper.field_class = 'col-sm-8'
+        self.helper.render_unmentioned_fields = False
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'first_name',
+                    'last_name',
+                    css_class='col-sm-6'
+                ),
+                Div(
+                    css_class='col-sm-6'
+                ),
+                css_class='well the-fieldset row'
+            ),
+        )
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
+
+
+class GroupForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        super(GroupForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+        self.helper.form_class = 'form-horizontal'
+        self.helper.render_unmentioned_fields = False
+        self.helper.layout = Layout(
+            Div(
+                'group_name',
+                'supervisor',
+                css_class='well the-fieldset row'
+            ),
+            Submit('submit', _('Submit'))
+        )
+
+    class Meta:
+        model = Group
+        fields = ('group_name', 'supervisor')

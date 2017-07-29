@@ -33,7 +33,9 @@
           </td>
           <td>123(dummy)</td>
           <td>{{ employee.user_shift }}</td>
-          <td><a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit user' %}"><span class="glyphicon glyphicon-pencil"></span></button></a></td>
+          <td>
+          {# Edit user #}
+          <a href="{% url 'edit_user_view' employee_id=employee.id %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit user' %}"><span class="glyphicon glyphicon-pencil"></span></button></a></td>
         </tr>
       {% endfor %}
    </tbody>
@@ -42,7 +44,7 @@
 {# List of groups #}
   <h1>{% trans "Groups" %}
   {# Button for adding groups #}
-  <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add group' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
+  <a href="{% url 'add_group_view' %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add group' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
   </h1>
   <table class="table table-striped">
     <thead>
@@ -65,10 +67,13 @@
             {% endfor %}
           </td>
           <td>
-          {# Add new shift #}
-          <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit group' %}">Add new shift<span class="glyphicon glyphicon-plus-sign divider-left"></span></button></a>
-          {# Edit group #}
-          <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit group' %}"><span class="glyphicon glyphicon-pencil"></span></button></a></td>
+            {# Add new shift #}
+            <a href=""><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add new shift' %}">Add new shift<span class="glyphicon glyphicon-plus-sign divider-left"></span></button></a>
+            {# Edit group #}
+            <a href="{% url 'edit_group_view' group_id=group.id %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit group' %}"><span class="glyphicon glyphicon-pencil"></span></button></a>
+            {# Delete group #}
+            <a href="{% url 'delete_group_view' group_id=group.id %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Delete group' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
+          </td>
         </tr>
       {% endfor %}
    </tbody>
