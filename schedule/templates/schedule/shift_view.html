@@ -1,24 +1,25 @@
 {% extends "schedule/base.html" %}
-{% load sekizai_tags i18n %}
+{% load i18n sekizai_tags %}
 
 {% block "content" %} 
 
   <div id='calendar'></div>
-  
+
 {% addtoblock "js" %}
   <script type="text/javascript">
     $(document).ready(function() {
       
       $('#calendar').fullCalendar({
         header: {
-          left: 'prev,next',
+          left: '',
           center: 'title',
-          right: 'month,agendaWeek,agendaDay,listWeek'
+          right: '',
         },
-        allDaySlot: false,
-        editable: false,
+        titleFormat: '[{{ shift.name }}]',
         slotLabelFormat:"HH:mm", // 0-24 on y-axis
+        allDaySlot: false,
         timeFormat: 'H(:mm)',
+        defaultView: 'agendaWeek',
         firstDay: 1, // first day of week is Monday
         navLinks: true, // can click day/week names to navigate views
         editable: true,
@@ -30,11 +31,12 @@
             title: '{{ event.title }}',
             start: '{{ event.time_from }}',
             end: '{{ event.time_until }}',
-            url: '{{ event.profile_url }}',
+            url: '',
             color: '{{ event.color }}',
+            dow: '{{ event.repeat }}'
           },
         {% endfor %}
-        ]
+        ],
       });
       
     });

@@ -1,0 +1,11 @@
+{% extends "schedule/base.html" %}
+{% load i18n crispy_forms_tags sekizai_tags %}
+
+{% crispy ShiftForm ShiftForm.helper %}
+
+{% block "content" %} 
+  <form class="uniForm" method="post">
+    {% csrf_token %}
+    {% crispy form %}
+  </form>
+{% endblock "content" %}

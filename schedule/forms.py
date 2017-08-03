@@ -1,5 +1,5 @@
 from django import forms
-from schedule.models import User_profile, Group
+from schedule.models import User_profile, Group, Week_shift
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
@@ -153,3 +153,33 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ('group_name', 'supervisor')
+
+
+class ShiftForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        super(ShiftForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+        self.helper.render_unmentioned_fields = False
+        self.helper.layout = Layout(
+            Div(
+                'name',
+                'monday',
+                'thuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+                'saturday',
+                'sunday',
+                'week_group',
+                css_class='well the-fieldset row'
+            ),
+            Submit('submit', _('Submit'))
+        )
+
+    class Meta:
+        model = Week_shift
+        fields = ('name', 'monday', 'thuesday', 'wednesday',
+                  'thursday', 'friday', 'saturday', 'sunday', 'week_group')

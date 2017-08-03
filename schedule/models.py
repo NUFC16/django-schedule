@@ -29,7 +29,7 @@ class Day_shift(models.Model):
     time_until = models.TimeField(null=True, blank=True)
 
     def __unicode__(self):
-        return 'Day_shift ' + str(self.time_from.hour) + '-' + str(self.time_until.hour)
+        return 'Day_shift ' + str(self.time_from) + '-' + str(self.time_until)
 
 
 class Week_shift(models.Model):
@@ -42,6 +42,9 @@ class Week_shift(models.Model):
     saturday = models.ForeignKey(Day_shift, null=True, related_name='+')
     sunday = models.ForeignKey(Day_shift, null=True, related_name='+')
     week_group = models.ForeignKey(Group)
+
+    def get_all_days(self):
+        return [self.monday, self.thuesday, self.wednesday, self.thursday, self.friday, self.saturday, self.sunday]
 
     def get_day(self, x):
         return {
@@ -166,10 +169,16 @@ class Schedule(models.Model):
         super(Schedule, self).save(*args, **kwargs)
 
     def get_string_from(self):
-        return self.date.strftime('%Y-%m-%d') + 'T' + self.time_from.strftime('%H:%M:%S')
+        if self.time_from:
+            return self.date.strftime('%Y-%m-%d') + 'T' + self.time_from.strftime('%H:%M:%S')
+        else:
+            return None
 
     def get_string_until(self):
-        return self.date.strftime('%Y-%m-%d') + 'T' + self.time_until.strftime('%H:%M:%S')
+        if self.time_until:
+            return self.date.strftime('%Y-%m-%d') + 'T' + self.time_until.strftime('%H:%M:%S')
+        else:
+            return None
 
     def __unicode__(self):
         return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.user.first_name + ' ' + self.user.user.last_name

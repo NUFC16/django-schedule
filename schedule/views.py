@@ -3,9 +3,9 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context import RequestContext
 from django.core.urlresolvers import resolve
 
-from schedule.models import User_profile, Group
+from schedule.models import User_profile, Group, Week_shift
 from django.contrib.auth.models import User
-from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm
+from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm, ShiftForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -20,7 +20,7 @@ def index(request):
     # generate schedule in advance if it does not exist
     for user in users:
         user.generate_schedule()
-    events = make_events(users)
+    events = make_events(users, request.user)
     return render(request, "schedule/index.html", {
         "users": users,
         "events": events,
@@ -193,3 +193,46 @@ def delete_group(request, group_id):
         messages.error(request, _('Group was not deleted'))
 
     return HttpResponseRedirect(reverse('groups_and_people_view'))
+
+@login_required
+def shift_view(request, shift_id):
+    shift = Week_shift.objects.get(pk=shift_id)
+    # users = User_profile.objects.filter(user_shift=shift)
+    events = make_empty_events(shift)
+    return render(request, "schedule/shift_view.html", {
+        "events": events,
+        "shift": shift,
+    })
+
+@login_required
+def add_shift(request):
+    # Dont allow ordinary user to manage groups and people
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    if request.method == 'POST':
+        form = ShiftForm(request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+
+            Week_shift.objects.create(
+                name=data['name'],
+                monday=data['monday'],
+                thuesday=data['thuesday'],
+                wednesday=data['wednesday'],
+                thursday=data['thursday'],
+                friday=data['friday'],
+                saturday=data['saturday'],
+                sunday=data['sunday'],
+                week_group=data['week_group']
+            )
+            messages.success(request, _('Shift was successfully added!'))
+            return HttpResponseRedirect(reverse('groups_and_people_view'))
+        else:
+            messages.error(request, _('Please correct the error below.'))
+    else:
+        form = ShiftForm()
+    return render(request, "schedule/add_shift.html", {
+        "form": form,
+    })

@@ -28,6 +28,7 @@ schedule_js = Bundle(
     'schedule/lib/jquery/jquery-2.2.0.js',
     'schedule/lib/fullcalendar3/dist/fullcalendar.js',
     'schedule/less/vendor/bootstrap3/dist/js/bootstrap.js',
+    'schedule/js/schedule.js',
     *uncompressed_js,
     filters='jsmin',
     output='schedule/gen/no-out.min.js'
