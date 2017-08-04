@@ -34,22 +34,40 @@ class Day_shift(models.Model):
 
 class Week_shift(models.Model):
     name = models.CharField(max_length=30)
-    monday = models.ForeignKey(Day_shift, null=True, related_name='+')
-    thuesday = models.ForeignKey(Day_shift, null=True, related_name='+')
-    wednesday = models.ForeignKey(Day_shift, null=True, related_name='+')
-    thursday = models.ForeignKey(Day_shift, null=True, related_name='+')
-    friday = models.ForeignKey(Day_shift, null=True, related_name='+')
-    saturday = models.ForeignKey(Day_shift, null=True, related_name='+')
-    sunday = models.ForeignKey(Day_shift, null=True, related_name='+')
+    monday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
+    tuesday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
+    wednesday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
+    thursday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
+    friday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
+    saturday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
+    sunday = models.ForeignKey(Day_shift, null=True, blank=True, related_name='+')
     week_group = models.ForeignKey(Group)
 
+    def save(self, *args, **kwargs):
+        if self.monday == None:
+            self.monday = Day_shift.objects.create()
+        if self.tuesday == None:
+            self.tuesday = Day_shift.objects.create()
+        if self.wednesday == None:
+            self.wednesday = Day_shift.objects.create()
+        if self.thursday == None:
+            self.thursday = Day_shift.objects.create()
+        if self.friday == None:
+            self.friday = Day_shift.objects.create()
+        if self.saturday == None:
+            self.saturday = Day_shift.objects.create()
+        if self.sunday == None:
+            self.sunday = Day_shift.objects.create()
+
+        super(Week_shift, self).save(*args, **kwargs)
+
     def get_all_days(self):
-        return [self.monday, self.thuesday, self.wednesday, self.thursday, self.friday, self.saturday, self.sunday]
+        return [self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday, self.sunday]
 
     def get_day(self, x):
         return {
             0: self.monday,
-            1: self.thuesday,
+            1: self.tuesday,
             2: self.wednesday,
             3: self.thursday,
             4: self.friday,
@@ -61,7 +79,7 @@ class Week_shift(models.Model):
         if x == 0:
             self.monday = val
         elif x == 1:
-            self.thuesday = val
+            self.tuesday = val
         elif x == 2:
             self.wednesday = val
         elif x == 3:

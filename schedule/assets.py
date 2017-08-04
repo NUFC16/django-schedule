@@ -27,6 +27,7 @@ schedule_js = Bundle(
     'schedule/lib/moment/moment.js',
     'schedule/lib/jquery/jquery-2.2.0.js',
     'schedule/lib/fullcalendar3/dist/fullcalendar.js',
+    'schedule/lib/fullcalendar3/dist/locale-all.js',
     'schedule/less/vendor/bootstrap3/dist/js/bootstrap.js',
     'schedule/js/schedule.js',
     *uncompressed_js,

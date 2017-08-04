@@ -37,5 +37,6 @@ def make_empty_events(shift):
                 "color": "",
                 "repeat": week_day,
             })
-        week_day += 1
+
+        week_day = (week_day + 1) % 7
     return event_list

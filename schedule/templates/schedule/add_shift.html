@@ -4,8 +4,60 @@
 {% crispy ShiftForm ShiftForm.helper %}
 
 {% block "content" %} 
-  <form class="uniForm" method="post">
+  <form id="add_shift_form" class="uniForm" method="post">
     {% csrf_token %}
     {% crispy form %}
   </form>
+  <div class="container" id="calendar"></div>
+  <button id="submitButton" type="button" class="btn divider-top" onclick="getElementById('add_shift_form').submit();">{% trans "Create new shift" %}</button>
+
+{% addtoblock "js" %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+          var calendar = $('#calendar').fullCalendar({
+          locale: 'hr',
+          header: {
+            left: '',
+            center: '',
+            right: '',
+          },
+          slotLabelFormat:"HH:mm", // 0-24 on y-axis
+          allDaySlot: false,
+          columnFormat: 'dddd', // show only name of the day
+          firstDay: 1, // first day of week is Monday
+          defaultView: 'agendaWeek',
+          editable: true,
+          selectable: true,
+          select: function(start, end) {
+              starttime = $.fullCalendar.formatDate(start,'HH:mm:ss');
+              endtime = $.fullCalendar.formatDate(end,'HH:mm:ss');
+              // get day which is clicked
+              day = $.fullCalendar.formatDate(start,'d');
+              // create hidden input (from)
+              $('<input>').attr({
+                  type: 'hidden',
+                  id: 'day'+day+'_from_id',
+                  name: 'day'+day+'_from',
+                  value: starttime
+              }).appendTo('form');
+
+              // create hidden input (until)
+              $('<input>').attr({
+                  type: 'hidden',
+                  id: 'day'+day+'_until_id',
+                  name: 'day'+day+'_until',
+                  value: endtime
+              }).appendTo('form');
+
+              $("#calendar").fullCalendar('renderEvent',
+                {
+                  title: $.fullCalendar.formatDate(start,'dddd'),
+                  start: start,
+                  end: end,
+                },true);
+           }
+        });
+    });
+  </script>
+{% endaddtoblock "js" %}
 {% endblock "content" %}

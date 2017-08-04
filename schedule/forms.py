@@ -162,24 +162,14 @@ class ShiftForm(forms.ModelForm):
         super(ShiftForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_tag = False
+        self.helper.label_class = 'col-sm-2'
+        self.helper.field_class = 'col-sm-4'
         self.helper.render_unmentioned_fields = False
         self.helper.layout = Layout(
-            Div(
-                'name',
-                'monday',
-                'thuesday',
-                'wednesday',
-                'thursday',
-                'friday',
-                'saturday',
-                'sunday',
-                'week_group',
-                css_class='well the-fieldset row'
-            ),
-            Submit('submit', _('Submit'))
+            'name',
+            'week_group',
         )
 
     class Meta:
         model = Week_shift
-        fields = ('name', 'monday', 'thuesday', 'wednesday',
-                  'thursday', 'friday', 'saturday', 'sunday', 'week_group')
+        fields = ('name', 'week_group')

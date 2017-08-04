@@ -10,6 +10,7 @@
     $(document).ready(function() {
       
       $('#calendar').fullCalendar({
+        locale: 'hr',
         header: {
           left: '',
           center: 'title',
@@ -20,6 +21,7 @@
         allDaySlot: false,
         timeFormat: 'H(:mm)',
         defaultView: 'agendaWeek',
+        columnFormat: 'dddd', // show only name of the day
         firstDay: 1, // first day of week is Monday
         navLinks: true, // can click day/week names to navigate views
         editable: true,

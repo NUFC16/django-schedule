@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context import RequestContext
 from django.core.urlresolvers import resolve
 
-from schedule.models import User_profile, Group, Week_shift
+from schedule.models import User_profile, Group, Week_shift, Day_shift
 from django.contrib.auth.models import User
 from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm, ShiftForm
 from django.contrib.auth.decorators import login_required
@@ -216,15 +216,45 @@ def add_shift(request):
         if form.is_valid():
             data = form.cleaned_data
 
+            # Create day shift objects
+            monday = Day_shift.objects.create(
+                time_from=request.POST.get("day1_from"),
+                time_until=request.POST.get("day1_until")
+            )
+            tuesday = Day_shift.objects.create(
+                time_from=request.POST.get("day2_from"),
+                time_until=request.POST.get("day2_until")
+            )
+            wednesday = Day_shift.objects.create(
+                time_from=request.POST.get("day3_from"),
+                time_until=request.POST.get("day3_until")
+            )
+            thursday = Day_shift.objects.create(
+                time_from=request.POST.get("day4_from"),
+                time_until=request.POST.get("day4_until")
+            )
+            friday = Day_shift.objects.create(
+                time_from=request.POST.get("day5_from"),
+                time_until=request.POST.get("day5_until")
+            )
+            saturday = Day_shift.objects.create(
+                time_from=request.POST.get("day6_from"),
+                time_until=request.POST.get("day6_until")
+            )
+            sunday = Day_shift.objects.create(
+                time_from=request.POST.get("day0_from"),
+                time_until=request.POST.get("day0_until")
+            )
+
             Week_shift.objects.create(
                 name=data['name'],
-                monday=data['monday'],
-                thuesday=data['thuesday'],
-                wednesday=data['wednesday'],
-                thursday=data['thursday'],
-                friday=data['friday'],
-                saturday=data['saturday'],
-                sunday=data['sunday'],
+                monday=monday,
+                tuesday=tuesday,
+                wednesday=wednesday,
+                thursday=thursday,
+                friday=friday,
+                saturday=saturday,
+                sunday=sunday,
                 week_group=data['week_group']
             )
             messages.success(request, _('Shift was successfully added!'))
