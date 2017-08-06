@@ -2,6 +2,7 @@ from schedule.models import Schedule, Week_shift
 from django.core.urlresolvers import reverse
 import datetime
 
+
 def make_events(users, logged_user):
     event_list = []
     color = ""
@@ -29,7 +30,8 @@ def make_empty_events(shift):
     for day in shift.get_all_days():
         if not day.time_from == None and not day.time_until == None:
             event_list.append({
-                "id": shift.id,
+                # id is a number 0-7 depending on a day
+                "id": week_day,
                 "title": "",
                 "time_from": day.time_from.strftime('%H:%M:%S'),
                 "time_until": day.time_until.strftime('%H:%M:%S'),

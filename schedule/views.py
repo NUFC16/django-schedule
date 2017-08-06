@@ -194,19 +194,48 @@ def delete_group(request, group_id):
 
     return HttpResponseRedirect(reverse('groups_and_people_view'))
 
+
 @login_required
 def shift_view(request, shift_id):
+    # Dont allow ordinary user to edit shifts
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
     shift = Week_shift.objects.get(pk=shift_id)
-    # users = User_profile.objects.filter(user_shift=shift)
+#            for key, value in request.POST.items():
+#                print(key, value)
+    if request.method == 'POST':
+        form_labels = [
+            ("monday", "day1_from", "day1_until"),
+            ("tuesday", "day2_from", "day2_until"),
+            ("wednesday", "day3_from", "day3_until"),
+            ("thursday", "day4_from", "day4_until"),
+            ("friday", "day5_from", "day5_until"),
+            ("saturday", "day6_from", "day6_until"),
+            ("sunday", "day0_from", "day0_until")
+        ]
+
+        for day, post_time_from, post_time_until in form_labels:
+            current_from = request.POST.get(post_time_from)
+            current_until = request.POST.get(post_time_until)
+
+            if current_from != None and current_until != None:
+                current_from = datetime.datetime.strptime(current_from, '%H:%M:%S').time()
+                current_until = datetime.datetime.strptime(current_until, '%H:%M:%S').time()
+
+            setattr(getattr(shift, day), 'time_from', current_from)
+            setattr(getattr(shift, day), 'time_until', current_until)
+
     events = make_empty_events(shift)
     return render(request, "schedule/shift_view.html", {
         "events": events,
         "shift": shift,
     })
 
+
 @login_required
 def add_shift(request):
-    # Dont allow ordinary user to manage groups and people
+    # Dont allow ordinary user to add shifts for certain group
     if not request.user.is_staff or not request.user.is_superuser:
         HttpResponseForbidden('<h1>Permission denied</h1>')
 
@@ -216,45 +245,32 @@ def add_shift(request):
         if form.is_valid():
             data = form.cleaned_data
 
-            # Create day shift objects
-            monday = Day_shift.objects.create(
-                time_from=request.POST.get("day1_from"),
-                time_until=request.POST.get("day1_until")
-            )
-            tuesday = Day_shift.objects.create(
-                time_from=request.POST.get("day2_from"),
-                time_until=request.POST.get("day2_until")
-            )
-            wednesday = Day_shift.objects.create(
-                time_from=request.POST.get("day3_from"),
-                time_until=request.POST.get("day3_until")
-            )
-            thursday = Day_shift.objects.create(
-                time_from=request.POST.get("day4_from"),
-                time_until=request.POST.get("day4_until")
-            )
-            friday = Day_shift.objects.create(
-                time_from=request.POST.get("day5_from"),
-                time_until=request.POST.get("day5_until")
-            )
-            saturday = Day_shift.objects.create(
-                time_from=request.POST.get("day6_from"),
-                time_until=request.POST.get("day6_until")
-            )
-            sunday = Day_shift.objects.create(
-                time_from=request.POST.get("day0_from"),
-                time_until=request.POST.get("day0_until")
-            )
+            day_shifts = {}
+            form_labels = [
+                ("monday", "day1_from", "day1_until"),
+                ("tuesday", "day2_from", "day2_until"),
+                ("wednesday", "day3_from", "day3_until"),
+                ("thursday", "day4_from", "day4_until"),
+                ("friday", "day5_from", "day5_until"),
+                ("saturday", "day6_from", "day6_until"),
+                ("sunday", "day0_from", "day0_until")
+            ]
+
+            for day, time_from, time_until in form_labels:
+                day_shifts[day] = Day_shift.objects.create(
+                    time_from=request.POST.get(time_from),
+                    time_until=request.POST.get(time_until)
+                )
 
             Week_shift.objects.create(
                 name=data['name'],
-                monday=monday,
-                tuesday=tuesday,
-                wednesday=wednesday,
-                thursday=thursday,
-                friday=friday,
-                saturday=saturday,
-                sunday=sunday,
+                monday=day_shifts["monday"],
+                tuesday=day_shifts["tuesday"],
+                wednesday=day_shifts["wednesday"],
+                thursday=day_shifts["thursday"],
+                friday=day_shifts["friday"],
+                saturday=day_shifts["saturday"],
+                sunday=day_shifts["sunday"],
                 week_group=data['week_group']
             )
             messages.success(request, _('Shift was successfully added!'))

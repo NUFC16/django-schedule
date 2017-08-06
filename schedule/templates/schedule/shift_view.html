@@ -2,11 +2,35 @@
 {% load i18n sekizai_tags %}
 
 {% block "content" %} 
-
   <div id='calendar'></div>
+<form class="uniForm" method="post">
+    {% csrf_token %}
+    <button class="btn">{% trans "Update shift" %}</button>
+</form>
 
 {% addtoblock "js" %}
   <script type="text/javascript">
+
+
+
+  {% for event in events %}
+    // create hidden input (from)
+    $('<input>').attr({
+        type: 'hidden',
+        id: 'day'+{{ event.repeat }}+'_from_id',
+        name: 'day'+{{ event.repeat }}+'_from',
+        value: '{{ event.time_from }}'
+    }).appendTo('form');
+
+    // create hidden input (until)
+    $('<input>').attr({
+        type: 'hidden',
+        id: 'day'+{{ event.repeat }}+'_until_id',
+        name: 'day'+{{ event.repeat }}+'_until',
+        value: '{{ event.time_until }}'
+    }).appendTo('form');
+  {% endfor %}  
+
     $(document).ready(function() {
       
       $('#calendar').fullCalendar({
@@ -16,6 +40,9 @@
           center: 'title',
           right: '',
         },
+        // Min and max time for creating/editing shifts
+        minTime: "07:00:00",
+        maxTime: "23:00:00",
         titleFormat: '[{{ shift.name }}]',
         slotLabelFormat:"HH:mm", // 0-24 on y-axis
         allDaySlot: false,
@@ -23,13 +50,12 @@
         defaultView: 'agendaWeek',
         columnFormat: 'dddd', // show only name of the day
         firstDay: 1, // first day of week is Monday
-        navLinks: true, // can click day/week names to navigate views
         editable: true,
-        eventLimit: true, // allow "more" link when too many events
+        selectable: true,
         events: [
         {% for event in events %}
           {
-            id: {{ event.id }},
+            id: '{{ event.id }}',
             title: '{{ event.title }}',
             start: '{{ event.time_from }}',
             end: '{{ event.time_until }}',
@@ -39,6 +65,23 @@
           },
         {% endfor %}
         ],
+        // Create different event
+        select: function(start, end) {
+          DS.createEvent(start, end);
+        },
+        // Used when editing shift and changing its length
+        eventResize: function(event, delta, revertFunc) {
+          DS.updateEvent(event);
+        },
+        // Used when moving shift
+        eventDrop: function(event, delta, revertFunc) {
+          DS.updateEvent(event);
+        },
+        // Onclick we delete event
+        eventClick: function (calEvent, jsEvent, view) {
+          // event id is the same as day id
+          DS.deleteEvent(calEvent._id);
+        }
       });
       
     });

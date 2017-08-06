@@ -14,49 +14,32 @@
 {% addtoblock "js" %}
   <script type="text/javascript">
     $(document).ready(function() {
-          var calendar = $('#calendar').fullCalendar({
-          locale: 'hr',
-          header: {
-            left: '',
-            center: '',
-            right: '',
-          },
-          slotLabelFormat:"HH:mm", // 0-24 on y-axis
-          allDaySlot: false,
-          columnFormat: 'dddd', // show only name of the day
-          firstDay: 1, // first day of week is Monday
-          defaultView: 'agendaWeek',
-          editable: true,
-          selectable: true,
-          select: function(start, end) {
-              starttime = $.fullCalendar.formatDate(start,'HH:mm:ss');
-              endtime = $.fullCalendar.formatDate(end,'HH:mm:ss');
-              // get day which is clicked
-              day = $.fullCalendar.formatDate(start,'d');
-              // create hidden input (from)
-              $('<input>').attr({
-                  type: 'hidden',
-                  id: 'day'+day+'_from_id',
-                  name: 'day'+day+'_from',
-                  value: starttime
-              }).appendTo('form');
-
-              // create hidden input (until)
-              $('<input>').attr({
-                  type: 'hidden',
-                  id: 'day'+day+'_until_id',
-                  name: 'day'+day+'_until',
-                  value: endtime
-              }).appendTo('form');
-
-              $("#calendar").fullCalendar('renderEvent',
-                {
-                  title: $.fullCalendar.formatDate(start,'dddd'),
-                  start: start,
-                  end: end,
-                },true);
-           }
-        });
+      var calendar = $('#calendar').fullCalendar({
+        locale: 'hr',
+        header: {
+          left: '',
+          center: '',
+          right: '',
+        },
+        // Min and max time for creating/editing shifts
+        minTime: "07:00:00",
+        maxTime: "23:00:00",
+        slotLabelFormat:"HH:mm", // 0-24 on y-axis
+        allDaySlot: false,
+        columnFormat: 'dddd', // show only name of the day
+        firstDay: 1, // first day of week is Monday
+        defaultView: 'agendaWeek',
+        editable: true,
+        selectable: true,
+        select: function(start, end) {
+          DS.createEvent(start, end);
+        },
+        // Onclick we delete event
+        eventClick: function (calEvent, jsEvent, view) {
+          // event id is the same as day id
+          DS.deleteEvent(calEvent._id);
+        }
+      });
     });
   </script>
 {% endaddtoblock "js" %}
