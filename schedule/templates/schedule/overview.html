@@ -59,7 +59,7 @@
     {% for group in groups.all %}
       <tr>
         <td>{{ group }}</td>
-        <td>123</td>
+        <td>{{ group.get_members.count }}</td>
         <td>
           {% for shift in group.week_shift_set.all %}
             <a href="{% url 'shift_view' shift_id=shift.id %}">{{ shift }}</a><br>

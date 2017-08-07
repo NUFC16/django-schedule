@@ -22,27 +22,27 @@
 
             <tr>
               <td>{% trans "Date of birth" %}:</td>
-              <td>01/24/1988</td>
+              <td>{{ user.date_of_birth }}</td>
             </tr>
 
             <tr>
               <td>{% trans "Gender" %}:</td>
-              <td>Female</td>
+              <td>{{ user.get_gender_display }}</td>
             </tr>
 
             <tr>
               <td>{% trans "Date of employment" %}:</td>
-              <td>1.1.1995</td>
+              <td>{{ user.date_of_employment }}</td>
             </tr>
 
             <tr>
               <td>{% trans "Number of hours this month" %}:</td>
-              <td>124</td>
+              <td>{{ user.get_current_working_hours }}</td>
             </tr>
 
             <tr>
               <td>{% trans "Calculated paycheck" %}:</td>
-              <td>3400.45 kn</td>    
+              <td>{{ user.calculate_current_paycheck }}kn</td>    
             </tr>
            
           </tbody>

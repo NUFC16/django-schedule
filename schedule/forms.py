@@ -93,13 +93,16 @@ class UserProfileForm(forms.ModelForm):
             Div(
                 'user_groups',
                 'user_shift',
+                'date_of_birth', 
+                'date_of_employment', 
+                'gender',
                 css_class='well the-fieldset row'
             ),
         )
 
     class Meta:
         model = User_profile
-        fields = ('user_groups', 'user_shift')
+        fields = ('user_groups', 'user_shift', 'date_of_birth', 'date_of_employment', 'gender')
 
 
 class EditUserForm(forms.ModelForm):

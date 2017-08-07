@@ -18,7 +18,7 @@ class Group(models.Model):
         if hasattr(self, 'supervisor'):
             self.old_supervisor = self.supervisor
 
-    def get_members():
+    def get_members(self):
         return self.user_profile_set.all()
 
     def __unicode__(self):
@@ -97,9 +97,17 @@ class Week_shift(models.Model):
 
 
 class User_profile(models.Model):
+    GENDER_CHOICES = (
+        ('M', _('Male')),
+        ('F', _('Female')),
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_groups = models.ManyToManyField(Group)
     user_shift = models.ForeignKey(Week_shift, null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+    date_of_employment = models.DateField(null=True, blank=True)
+    default_wage = models.DecimalField(decimal_places=2, max_digits=5, default=0, blank=True)
 
     def __init__(self, *args, **kwargs):
         super(User_profile, self).__init__(*args, **kwargs)
@@ -126,6 +134,9 @@ class User_profile(models.Model):
             if schedule.time_until and schedule.time_from:
                 time_sum += schedule.time_until.hour - schedule.time_from.hour
         return time_sum
+
+    def calculate_current_paycheck(self):
+        return self.get_current_working_hours() * self.default_wage
 
     def __unicode__(self):
         return self.user.first_name + ' ' + self.user.last_name
