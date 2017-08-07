@@ -4,9 +4,10 @@ if (typeof DS == 'undefined') { // T = django ticketing
 
 DS = function() {
   // Modal for deleting group
-  function sendParametersGroup (title, link) {
-    $("#group_title").html(title);
-    $('#delete_group_submit').attr('onclick', "window.location.href='"+link+"'");
+  function sendDeletionParameters (title, link, message) {
+    $("#modal_title").html(title);
+    $("#modal_message").html(message);
+    $('#delete_submit').attr('onclick', "window.location.href='"+link+"'");
   }
 
   function createEvent(start, end) {
@@ -51,7 +52,7 @@ DS = function() {
   }
 
   return {
-    sendParametersGroup: sendParametersGroup,
+    sendDeletionParameters: sendDeletionParameters,
     createEvent: createEvent,
     updateEvent: updateEvent,
     deleteEvent: deleteEvent,

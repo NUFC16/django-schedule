@@ -12,5 +12,6 @@ urlpatterns = patterns(
     url(r'^(?P<group_id>\d+)/edit_group/$', add_and_edit_group, name='edit_group_view'),
     url(r'^(?P<group_id>\d+)/delete_group/$', delete_group, name='delete_group_view'),
     url(r'^(?P<shift_id>\d+)/shift/$', shift_view, name='shift_view'),
+    url(r'^(?P<shift_id>\d+)/delete_shift/$', delete_shift, name='delete_shift_view'),
     url(r'^add_shift/$', add_shift, name='add_shift_view'),
 )

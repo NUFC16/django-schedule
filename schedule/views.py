@@ -202,8 +202,7 @@ def shift_view(request, shift_id):
         HttpResponseForbidden('<h1>Permission denied</h1>')
 
     shift = Week_shift.objects.get(pk=shift_id)
-#            for key, value in request.POST.items():
-#                print(key, value)
+
     if request.method == 'POST':
         form_labels = [
             ("monday", "day1_from", "day1_until"),
@@ -220,8 +219,10 @@ def shift_view(request, shift_id):
             current_until = request.POST.get(post_time_until)
 
             if current_from != None and current_until != None:
-                current_from = datetime.datetime.strptime(current_from, '%H:%M:%S').time()
-                current_until = datetime.datetime.strptime(current_until, '%H:%M:%S').time()
+                current_from = datetime.datetime.strptime(
+                    current_from, '%H:%M:%S').time()
+                current_until = datetime.datetime.strptime(
+                    current_until, '%H:%M:%S').time()
 
             setattr(getattr(shift, day), 'time_from', current_from)
             setattr(getattr(shift, day), 'time_until', current_until)
@@ -231,6 +232,23 @@ def shift_view(request, shift_id):
         "events": events,
         "shift": shift,
     })
+
+
+@login_required
+def delete_shift(request, shift_id):
+    # Dont allow ordinary user to delete shifts
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    shift = Week_shift.objects.get(pk=shift_id)
+
+    try:
+        shift.delete()
+        messages.success(request, _('Shift was successfully deleted!'))
+    except:
+        messages.error(request, _('Shift was not deleted'))
+
+    return HttpResponseRedirect(reverse('groups_and_people_view'))
 
 
 @login_required
