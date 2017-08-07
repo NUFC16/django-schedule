@@ -16,7 +16,8 @@ from schedule.utils import *
 @login_required
 def index(request):
     groups = User_profile.objects.get(user=request.user).user_groups
-    users = User_profile.objects.filter(user_groups__in=groups.all())
+    # user can be in more groups so distinct is needed
+    users = User_profile.objects.filter(user_groups__in=groups.all()).distinct()
     # generate schedule in advance if it does not exist
     for user in users:
         user.generate_schedule()
@@ -241,7 +242,11 @@ def delete_shift(request, shift_id):
         HttpResponseForbidden('<h1>Permission denied</h1>')
 
     shift = Week_shift.objects.get(pk=shift_id)
-
+    # This is used in order to secure integrity of the base
+    user_profiles = User_profile.objects.filter(user_shift=shift)
+    for user in user_profiles:
+        user.user_shift = None
+        user.save()
     try:
         shift.delete()
         messages.success(request, _('Shift was successfully deleted!'))

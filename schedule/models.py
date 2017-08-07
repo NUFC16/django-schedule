@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 import datetime
 
@@ -100,15 +101,31 @@ class User_profile(models.Model):
     user_groups = models.ManyToManyField(Group)
     user_shift = models.ForeignKey(Week_shift, null=True)
 
+    def __init__(self, *args, **kwargs):
+        super(User_profile, self).__init__(*args, **kwargs)
+        if hasattr(self, 'user_shift'):
+            self.old_shift = self.user_shift
+
     def generate_schedule(self):
-        a = datetime.datetime.today()
+        today = datetime.datetime.today()
         numdays = 60
         for x in range(0, numdays):
-            date = a + datetime.timedelta(days=x)
+            date = today + datetime.timedelta(days=x)
             try:
                 Schedule.objects.get(date=date, user=self)
             except:
                 Schedule.objects.create(date=date, user=self)
+
+    def get_current_working_hours(self):
+        month_current = datetime.date.today()
+        month_1st = month_current.replace(day=1)
+        all_schedules = Schedule.objects.filter(date__range=[month_1st, month_current], user=self)
+        time_sum = 0
+        for schedule in all_schedules.all():
+            # If schedule is not None 
+            if schedule.time_until and schedule.time_from:
+                time_sum += schedule.time_until.hour - schedule.time_from.hour
+        return time_sum
 
     def __unicode__(self):
         return self.user.first_name + ' ' + self.user.last_name
@@ -148,9 +165,16 @@ def save_user_profile(sender, instance, **kwargs):
         instance.user_profile.save()
 
 
-@receiver(models.signals.post_save, sender=User_profile)
-def execute_after_save(sender, instance, created, *args, **kwargs):
-    if not created:
+@receiver(post_save, sender=User_profile)
+def generate_user_schedule(sender, instance, created, *args, **kwargs):
+    # If User_profile is not created then then dont generate schedule
+    # If user_shift is not changed then dont generate schedule
+    # If user shift is set to None then dont generate schedule
+    if not created and (instance.user_shift != instance.old_shift) and instance.user_shift != None:
+        month_current = datetime.date.today()
+        schedules_to_remove = Schedule.objects.filter(Q(date__gte=month_current), user=instance)
+        for schedule in schedules_to_remove:
+            schedule.delete()
         instance.generate_schedule()
 
 
@@ -168,7 +192,7 @@ class Schedule(models.Model):
     user = models.ForeignKey(User_profile)
 
     def save(self, make_instance=False, *args, **kwargs):
-        if self.time_from == None or self.time_until == None:
+        if (self.time_from == None or self.time_until == None) and self.user.user_shift != None:
             temp_shift = self.user.user_shift.get_day(self.date.weekday())
 
             self.time_from = temp_shift.time_from
