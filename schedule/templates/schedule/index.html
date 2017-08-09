@@ -2,7 +2,7 @@
 {% load sekizai_tags i18n %}
 
 {% block "content" %} 
-
+  {{ user.user_profile.user_groups }}
   <div id='calendar'></div>
   
 {% addtoblock "js" %}
@@ -31,7 +31,7 @@
             title: '{{ event.title }}',
             start: '{{ event.time_from }}',
             end: '{{ event.time_until }}',
-            url: '{{ event.profile_url }}',
+            url: {% if user.user.is_staff %}'{{ event.profile_url }}'{% else %} "" {% endif %},
             color: '{{ event.color }}',
           },
         {% endfor %}

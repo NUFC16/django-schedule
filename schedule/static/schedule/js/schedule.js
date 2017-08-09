@@ -51,10 +51,37 @@ DS = function() {
     $('#calendar').fullCalendar('removeEvents', event_id);
   }
 
+  // calendar_id is a string
+  function showCalendar(calendar_id) {
+  	$('#'+calendar_id).show();
+
+  	// This is needed in order to show only one calendar at the time
+  	if (calendar_id == 'calendar1') {
+    	$('#calendar2').hide();
+  	} else {
+  		$('#calendar1').hide();
+  	}
+  }
+
+  function chooseSwapShift(shift_event, calendar_id) {
+  	var start = $.fullCalendar.formatDate(shift_event.start,'HH:mm');
+    var end = $.fullCalendar.formatDate(shift_event.end,'HH:mm');
+    var date = shift_event._start.format('DD-MM-YYYY');
+    var title = shift_event.title + " " + date + " <br>" + start + "-" + end ;
+
+    var btn_id = calendar_id+'_btn'
+
+  	$(btn_id).val(shift_event._id);
+  	$(btn_id).html(title);
+  	$(btn_id).css('background-color', shift_event.color);
+  }
+
   return {
     sendDeletionParameters: sendDeletionParameters,
     createEvent: createEvent,
     updateEvent: updateEvent,
     deleteEvent: deleteEvent,
+    showCalendar: showCalendar,
+    chooseSwapShift: chooseSwapShift,
   };
 }();

@@ -23,13 +23,14 @@ def index(request):
         user.generate_schedule()
     events = make_events(users, request.user)
     return render(request, "schedule/index.html", {
+        "user": request.user.user_profile,
         "users": users,
         "events": events,
     })
 
 
 @login_required
-def employee_view(request, employee_id):
+def employee_info(request, employee_id):
     user = User_profile.objects.get(pk=employee_id)
     return render(request, "schedule/employee_info.html", {
         "user": user,
@@ -69,6 +70,7 @@ def add_user(request):
         user_form = UserForm(is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm()
     return render(request, "schedule/add_user.html", {
+        "user": request.user.user_profile,
         "user_form": user_form,
         "profile_form": profile_form
     })
@@ -112,6 +114,7 @@ def edit_user(request, employee_id):
         user_form = EditUserForm(instance=employee.user)
         profile_form = UserProfileForm(initial=data_user_profile)
     return render(request, "schedule/add_user.html", {
+        "user": request.user.user_profile,
         "user_form": user_form,
         "profile_form": profile_form,
     })
@@ -131,6 +134,7 @@ def groups_and_people(request):
         user_groups__in=groups.all()).distinct().exclude(user=request.user)
 
     return render(request, "schedule/overview.html", {
+        "user": request.user.user_profile,
         "groups": groups,
         "employees": employees,
     })
@@ -177,6 +181,7 @@ def add_and_edit_group(request, group_id=None):
         form = GroupForm(initial=data)
 
     return render(request, "schedule/add_group.html", {
+        "user": request.user.user_profile,
         "form": form,
     })
 
@@ -230,6 +235,7 @@ def shift_view(request, shift_id):
 
     events = make_empty_events(shift)
     return render(request, "schedule/shift_view.html", {
+        "user": request.user.user_profile,
         "events": events,
         "shift": shift,
     })
@@ -303,5 +309,34 @@ def add_shift(request):
     else:
         form = ShiftForm()
     return render(request, "schedule/add_shift.html", {
+        "user": request.user.user_profile,
         "form": form,
+    })
+
+
+def swaps(request, group_id):
+    pending_swaps = None
+
+    # get all groups user is in
+    group = Group.objects.get(pk=group_id)
+    # get all people user is superior and dont show logged user
+    employees = User_profile.objects.filter(user_groups=group).exclude(user=request.user)
+
+    events_others = make_events(employees, request.user)
+    # If its supervisor then he can change all shift of his employees
+    events_logged = events_others
+    if not request.user.is_staff or not request.user.is_superuser:
+        # If its employee he can only swap his shift for someone elses
+        events_logged = make_events([request.user.user_profile], request.user)
+
+    if request.method == 'POST':
+        print("ww")
+
+
+    return render(request, "schedule/swaps.html", {
+        "user": request.user.user_profile,
+        "group": group,
+        "pending_swaps": pending_swaps,
+        "events_others": events_others,
+        "events_logged": events_logged,
     })

@@ -9,7 +9,7 @@ def make_events(users, logged_user):
     for user in users:
         schedules = Schedule.objects.filter(user=user)
         if user == logged_user.user_profile:
-            color = 'green'
+            color = '#32CD32' # lightgreen
         for schedule in schedules:
             if not schedule.get_string_from() == None and not schedule.get_string_until() == None:
                 event_list.append({

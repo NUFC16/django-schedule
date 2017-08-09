@@ -4,7 +4,7 @@ from .views import *
 urlpatterns = patterns(
     'schedule.views',
     url(r'^$', index, name='index'),
-    url(r'^(?P<employee_id>\d+)/info/$', employee_view, name='employee_view'),
+    url(r'^(?P<employee_id>\d+)/info/$', employee_info, name='employee_view'),
     url(r'^add_user/$', add_user, name='add_user_view'),
     url(r'^(?P<employee_id>\d+)/edit_user/$', edit_user, name='edit_user_view'),
     url(r'^overview/$', groups_and_people, name='groups_and_people_view'),
@@ -14,4 +14,5 @@ urlpatterns = patterns(
     url(r'^(?P<shift_id>\d+)/shift/$', shift_view, name='shift_view'),
     url(r'^(?P<shift_id>\d+)/delete_shift/$', delete_shift, name='delete_shift_view'),
     url(r'^add_shift/$', add_shift, name='add_shift_view'),
+    url(r'^(?P<group_id>\d+)/swaps/$', swaps, name='swaps_view'),
 )

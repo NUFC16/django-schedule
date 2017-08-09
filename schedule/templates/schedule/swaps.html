@@ -1,0 +1,106 @@
+{% extends "schedule/base.html" %}
+{% load sekizai_tags i18n %}
+
+{% block "content" %} 
+<h1>{{ group }}</h1>
+<div class="container">
+  <div class="swap-row">
+    <form class="">
+      <button id="calendar2_btn" type="button" class="swap-user-btn" onclick="DS.showCalendar('calendar2');" name="logged_user_shift">
+        {% if user.user.is_staff %} 
+          {% trans "Pick a shift" %} 
+        {% else %} 
+          {% trans "Pick your shift" %} 
+        {% endif %}
+      </button>
+      <span class="swap-arrow"></span>
+      <button id="calendar1_btn" type="button" class="swap-user-btn" onclick="DS.showCalendar('calendar1');" name="shift_to_change_for">{% trans "Pick shift to change for" %}</button>
+      <div class="swap-permanent">
+        <label class="divider-right">{% trans "Make swap permanent" %}</label><input type="checkbox" name="is_permanent">
+      </div>
+      <button class="swap-submit-btn"><span class="swap-submit-icon"></span></button>
+    </form>
+  </div>
+</div>
+
+<div id='calendar2'></div>
+<div id='calendar1'></div>
+
+{% addtoblock "js" %}
+  <script type="text/javascript">
+
+    $(document).ready(function() {
+      
+      $('#calendar2').fullCalendar({
+        locale: 'hr',
+        header: {
+          left: 'next',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        allDaySlot: false,
+        slotLabelFormat:"HH:mm", // 0-24 on y-axis
+        timeFormat: 'H(:mm)',
+        firstDay: 1, // first day of week is Monday
+        navLinks: true, // can click day/week names to navigate views
+        editable: false,
+        eventLimit: true, // allow "more" link when too many events
+        events: [
+          {% for event in events_logged %}
+            {
+              id: '{{ event.id }}',
+              title: '{{ event.title }}',
+              start: '{{ event.time_from }}',
+              end: '{{ event.time_until }}',
+              // color is green
+              color: '#32CD32',
+            },
+          {% endfor %}
+          ],
+          // Onclick we choose shift
+          eventClick: function (calEvent, jsEvent, view) {
+            DS.chooseSwapShift(calEvent, '#calendar2');
+          }
+      }).hide();
+
+    });
+
+    $(document).ready(function() {
+        
+        $('#calendar1').fullCalendar({
+          locale: 'hr',
+          header: {
+            left: 'next',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+          },
+          allDaySlot: false,
+          slotLabelFormat:"HH:mm", // 0-24 on y-axis
+          timeFormat: 'H(:mm)',
+          firstDay: 1, // first day of week is Monday
+          navLinks: true, // can click day/week names to navigate views
+          editable: false,
+          selectable: true,
+          eventLimit: true, // allow "more" link when too many events
+          events: [
+          {% for event in events_others %}
+            {
+              id: '{{ event.id }}',
+              title: '{{ event.title }}',
+              start: '{{ event.time_from }}',
+              end: '{{ event.time_until }}',
+              // color is lightblue
+              color: '#6495ed',
+            },
+          {% endfor %}
+          ],
+          // Onclick we choose shift
+          eventClick: function (calEvent, jsEvent, view) {
+            DS.chooseSwapShift(calEvent, '#calendar1');
+          }
+        }).hide();
+        
+    });
+  </script>
+{% endaddtoblock "js" %}
+{% endblock "content" %}
