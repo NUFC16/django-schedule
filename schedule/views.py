@@ -5,7 +5,7 @@ from django.core.urlresolvers import resolve
 
 from schedule.models import User_profile, Group, Week_shift, Day_shift
 from django.contrib.auth.models import User
-from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm, ShiftForm
+from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm, ShiftForm, SwapForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -330,13 +330,20 @@ def swaps(request, group_id):
         events_logged = make_events([request.user.user_profile], request.user)
 
     if request.method == 'POST':
-        print("ww")
-
-
+        form = SwapForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            messages.success(request, _('Swap was successfully sent!'))
+            return HttpResponseRedirect(reverse('swaps_view', kwargs={ "group_id": group_id }))
+        else:
+            messages.error(request, _('Please correct the error above.'))
+    else:
+        form = SwapForm()
     return render(request, "schedule/swaps.html", {
         "user": request.user.user_profile,
         "group": group,
         "pending_swaps": pending_swaps,
         "events_others": events_others,
         "events_logged": events_logged,
+        "form": form,
     })

@@ -71,8 +71,12 @@ DS = function() {
 
     var btn_id = calendar_id+'_btn'
 
-  	$(btn_id).val(shift_event._id);
+    // Add value to input to submit in a form
+  	$(calendar_id+'_input').val(shift_event._id);
+  	// Add text for better ui
   	$(btn_id).html(title);
+  	// remove unnecessary class if errors exist
+  	$(btn_id).removeClass('alert');
   	$(btn_id).css('background-color', shift_event.color);
   }
 

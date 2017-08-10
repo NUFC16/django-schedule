@@ -1,10 +1,11 @@
 from django import forms
-from schedule.models import User_profile, Group, Week_shift
+from schedule.models import User_profile, Group, Week_shift, Swap
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Div, HTML, Field, Submit
+import datetime
 
 
 class UserForm(forms.ModelForm):
@@ -178,3 +179,63 @@ class ShiftForm(forms.ModelForm):
         model = Week_shift
         fields = ('name', 'week_group')
 
+
+class SwapForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        super(SwapForm, self).__init__(*args, **kwargs)
+        # Custom error message
+        self.fields['schedule_1'].error_messages = {
+            'required': _('Pick a shift!')}
+        self.fields['schedule_2'].error_messages = {
+            'required': _('Pick a shift!')}
+
+        # Crispy forms
+        self.helper = FormHelper(self)
+        self.helper.form_show_errors = False
+        self.helper.form_tag = False
+        self.helper.render_unmentioned_fields = False
+        self.helper.layout = Layout(
+            Field('schedule_2', template="schedule/includes/schedule_2.html"),
+            HTML("<span class='swap-arrow'></span>"),
+            Field('schedule_1', template="schedule/includes/schedule_1.html"),
+            Field('permanent', template="schedule/includes/permanent.html")
+        )
+
+    def is_valid(self):
+        valid = super(SwapForm, self).is_valid()
+ 
+        # we're done now if not valid
+        if not valid:
+            return valid
+
+        schedule_1 = self.cleaned_data["schedule_1"]
+        if not schedule_1:
+            return False
+
+        schedule_2 = self.cleaned_data["schedule_2"]
+        if not schedule_2:
+            return False
+
+        today = datetime.datetime.today().date()
+        # If one of schedules is in past then dont allow it
+        # If change is on the same day we are allowing it
+        # If change is not on the same day then it is allowed only if one
+        # of the employees is free
+        if (schedule_1.date <= today) or (schedule_2.date <= today):
+            if schedule_1.date <= today:
+                self._errors['schedule_1'] = _("Picked date is in the past")
+            if schedule_2.date <= today:
+                self._errors['schedule_2'] = _("Picked date is in the past")
+            return False
+        elif ((schedule_1.time_from != None) or (schedule_2.time_from != None)) and (schedule_1.date != schedule_2.date):
+            self.add_error(None, forms.ValidationError(_("Picked shifts are not swapable!"), code='invalid'))
+            return False
+
+        # all good
+        return True
+
+    class Meta:
+        model = Swap
+        fields = ('schedule_1', 'schedule_2', 'permanent')

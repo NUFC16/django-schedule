@@ -1,0 +1,12 @@
+{% load sekizai_tags i18n %}
+<button id="calendar2_btn" type="button" class="swap-user-btn {% if form.schedule_2.errors %} alert alert-danger {% endif %}" onclick="DS.showCalendar('calendar2');">
+  {% if form.schedule_2.errors %}
+    {{ form.schedule_2.errors|striptags }}
+  {% else %}
+    {% if user.user.is_staff %}
+      {% trans "Pick a shift" %}
+    {% else %}
+      {% trans "Pick your shift" %}
+    {% endif %}
+  {% endif %}</button>
+<input id="calendar2_input" type="text" name="schedule_2" value="" hidden>

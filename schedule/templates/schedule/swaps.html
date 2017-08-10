@@ -1,27 +1,36 @@
 {% extends "schedule/base.html" %}
-{% load sekizai_tags i18n %}
+{% load sekizai_tags i18n crispy_forms_tags %}
+
+{% crispy SwapForm SwapForm.helper %}
 
 {% block "content" %} 
 <h1>{{ group }}</h1>
 <div class="container">
   <div class="swap-row">
-    <form class="">
-      <button id="calendar2_btn" type="button" class="swap-user-btn" onclick="DS.showCalendar('calendar2');" name="logged_user_shift">
-        {% if user.user.is_staff %} 
-          {% trans "Pick a shift" %} 
-        {% else %} 
-          {% trans "Pick your shift" %} 
-        {% endif %}
-      </button>
-      <span class="swap-arrow"></span>
-      <button id="calendar1_btn" type="button" class="swap-user-btn" onclick="DS.showCalendar('calendar1');" name="shift_to_change_for">{% trans "Pick shift to change for" %}</button>
-      <div class="swap-permanent">
-        <label class="divider-right">{% trans "Make swap permanent" %}</label><input type="checkbox" name="is_permanent">
-      </div>
+    <form method="post">
+      {% csrf_token %}
+      {% crispy form %}
       <button class="swap-submit-btn"><span class="swap-submit-icon"></span></button>
     </form>
+    {% for error in form.non_field_errors %}
+      <div class="alert alert-danger alert-dismissible" role="alert">
+        {{ error }}
+      </div>
+    {% endfor %}
   </div>
 </div>
+
+{# return message if swap wasnt successful #}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" role="alert">
+      <button type="button-default" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
 
 <div id='calendar2'></div>
 <div id='calendar1'></div>
@@ -38,6 +47,8 @@
           center: 'title',
           right: 'month,agendaWeek,agendaDay'
         },
+        minTime: "07:00:00",
+        maxTime: "23:00:00",
         allDaySlot: false,
         slotLabelFormat:"HH:mm", // 0-24 on y-axis
         timeFormat: 'H(:mm)',
@@ -45,6 +56,7 @@
         navLinks: true, // can click day/week names to navigate views
         editable: false,
         eventLimit: true, // allow "more" link when too many events
+        defaultView: 'agendaWeek',
         events: [
           {% for event in events_logged %}
             {
@@ -74,6 +86,8 @@
             center: 'title',
             right: 'month,agendaWeek,agendaDay'
           },
+          minTime: "07:00:00",
+          maxTime: "23:00:00",
           allDaySlot: false,
           slotLabelFormat:"HH:mm", // 0-24 on y-axis
           timeFormat: 'H(:mm)',
@@ -82,6 +96,7 @@
           editable: false,
           selectable: true,
           eventLimit: true, // allow "more" link when too many events
+          defaultView: 'agendaWeek',
           events: [
           {% for event in events_others %}
             {
