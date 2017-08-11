@@ -340,6 +340,7 @@ def swaps(request, group_id):
                 Swap.objects.create(
                     schedule_1=data["schedule_1"],
                     schedule_2=data["schedule_2"],
+                    user=request.user,
                     date=datetime.datetime.today().date(),
                     permanent=data["permanent"],
                     status=confirmation_status
