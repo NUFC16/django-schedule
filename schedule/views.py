@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context import RequestContext
 from django.core.urlresolvers import resolve
 
-from schedule.models import User_profile, Group, Week_shift, Day_shift
+from schedule.models import User_profile, Group, Week_shift, Day_shift, Swap
 from django.contrib.auth.models import User
 from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm, ShiftForm, SwapForm
 from django.contrib.auth.decorators import login_required
@@ -333,7 +333,20 @@ def swaps(request, group_id):
         form = SwapForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            messages.success(request, _('Swap was successfully sent!'))
+            confirmation_status = False
+            if request.user.is_staff or request.user.is_superuser:
+                confirmation_status = True
+            try:
+                Swap.objects.create(
+                    schedule_1=data["schedule_1"],
+                    schedule_2=data["schedule_2"],
+                    date=datetime.datetime.today().date(),
+                    permanent=data["permanent"],
+                    status=confirmation_status
+                )
+                messages.success(request, _('Swap was successfully sent!'))
+            except:
+                messages.error(request, _('Swap was not created!'))
             return HttpResponseRedirect(reverse('swaps_view', kwargs={ "group_id": group_id }))
         else:
             messages.error(request, _('Please correct the error above.'))

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user_profile',
             name='default_wage',
-            field=models.DecimalField(default=0, max_digits=3, decimal_places=2, blank=True),
+            field=models.DecimalField(default=0, max_digits=5, decimal_places=2, blank=True),
         ),
     ]

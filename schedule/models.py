@@ -120,9 +120,9 @@ class User_profile(models.Model):
         for x in range(0, numdays):
             date = today + datetime.timedelta(days=x)
             try:
-                Schedule.objects.get(date=date, user=self)
+                Schedule.objects.get(date=date, user=self, schedule=None)
             except:
-                Schedule.objects.create(date=date, user=self)
+                Schedule.objects.create(date=date, user=self, schedule=None)
 
     def get_current_working_hours(self):
         month_current = datetime.date.today()
@@ -249,27 +249,29 @@ class Swap(models.Model):
         self.delete()
 
     def save(self, make_instance=True, *args, **kwargs):
-        # Swap schedules(class) which enables change to be visible in real
-        # schedule
-        sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
-        sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
+        if self.status == True:
+            # Swap schedules(class) which enables change to be visible in real
+            # schedule
+            sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
+            sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
 
-        if self.permanent == True:
-            shift_1 = sch_1.user.user_shift
-            shift_2 = sch_2.user.user_shift
+            if self.permanent == True:
+                shift_1 = sch_1.user.user_shift
+                shift_2 = sch_2.user.user_shift
 
-            day_1 = shift_1.get_day(sch_1.date.weekday())
-            day_2 = shift_2.get_day(sch_2.date.weekday())
+                day_1 = shift_1.get_day(sch_1.date.weekday())
+                day_2 = shift_2.get_day(sch_2.date.weekday())
 
-            shift_1.change_day(sch_1.date.weekday(), day_2)
-            shift_1.save()
-            shift_2.change_day(sch_2.date.weekday(), day_1)
-            shift_2.save()
+                shift_1.change_day(sch_1.date.weekday(), day_2)
+                shift_1.save()
+                shift_2.change_day(sch_2.date.weekday(), day_1)
+                shift_2.save()
 
-        sch_1.user, sch_2.user = sch_2.user, sch_1.user
-        sch_1.save(make_instance=make_instance)
-        sch_2.save(make_instance=make_instance)
-        # save current stati if reverse is used
+            sch_1.user, sch_2.user = sch_2.user, sch_1.user
+            sch_1.save(make_instance=make_instance)
+            sch_2.save(make_instance=make_instance)
+        
+        # save current state if reverse is used
         if make_instance == False:
             follow_schedule_1 = Schedule.objects.get(schedule=sch_1)
             follow_schedule_2 = Schedule.objects.get(schedule=sch_2)

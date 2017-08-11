@@ -7,7 +7,7 @@ def make_events(users, logged_user):
     event_list = []
     color = ""
     for user in users:
-        schedules = Schedule.objects.filter(user=user)
+        schedules = Schedule.objects.filter(user=user, schedule=None)
         if user == logged_user.user_profile:
             color = '#32CD32' # lightgreen
         for schedule in schedules:
