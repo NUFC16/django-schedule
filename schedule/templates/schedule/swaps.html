@@ -4,6 +4,17 @@
 {% crispy SwapForm SwapForm.helper %}
 
 {% block "content" %} 
+
+{% if resolved_swaps %}
+  <h1>{% trans "Resolved swaps" %}</h1>
+  {% include "schedule/includes/swap_table.html" with swap_list=resolved_swaps resolved=True %}
+{% endif %}
+
+{% if pending_swaps %}
+  <h1>{% trans "Pending swaps" %}</h1>
+  {% include "schedule/includes/swap_table.html" with swap_list=pending_swaps resolved=False %}
+{% endif %}
+
 <h1>{{ group }}</h1>
 <div class="container">
   <div class="swap-row">
@@ -43,7 +54,7 @@
       $('#calendar2').fullCalendar({
         locale: 'hr',
         header: {
-          left: 'next',
+          left: 'prev next',
           center: 'title',
           right: 'month,agendaWeek,agendaDay'
         },
@@ -82,7 +93,7 @@
         $('#calendar1').fullCalendar({
           locale: 'hr',
           header: {
-            left: 'next',
+            left: 'prev next',
             center: 'title',
             right: 'month,agendaWeek,agendaDay'
           },

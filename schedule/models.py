@@ -224,7 +224,7 @@ class Schedule(models.Model):
             # In case of change - followup
             try:
                 old_schedule = Schedule.objects.get(pk=self.pk)
-                new_followup = old_schedule
+                new_followup = self
                 new_followup.pk = None
                 new_followup.save()
                 old_schedule.schedule = new_followup
@@ -233,6 +233,9 @@ class Schedule(models.Model):
                 pass
         # Call the "real" save() method.
         super(Schedule, self).save(*args, **kwargs)
+
+    def get_time_shift(self):
+        return self.time_from.strftime('%H:%M') + " - " + self.time_until.strftime('%H:%M')
 
     def get_string_from(self):
         if self.time_from:
@@ -247,7 +250,7 @@ class Schedule(models.Model):
             return None
 
     def __unicode__(self):
-        return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.user.first_name + ' ' + self.user.user.last_name
+        return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.user.first_name + ' ' + self.user.user.last_name + ' ' + str(self.pk)
 
 
 class Swap(models.Model):
@@ -255,20 +258,26 @@ class Swap(models.Model):
     schedule_2 = models.ForeignKey(Schedule, related_name='+')
     # It should not be nullable, this is quickfix
     user = models.ForeignKey(User, null=True)
+    # One user can have more groups so we must define group which swap applies to
+    # It should not be nullable
+    group = models.ForeignKey(Group, null=True)
     date = models.DateField()
     permanent = models.BooleanField(default=False)
+    # status determines if swap is approved by supervisor
     status = models.BooleanField(default=False)
+    # if this field is true, supervisor made some action (approve/disapprove)
+    resolved = models.BooleanField(default=False)
 
     def revert(self):
         self.save(make_instance=False)
         self.delete()
 
     def save(self, make_instance=True, *args, **kwargs):
-        if self.status == True:
-            # Swap schedules(class) which enables change to be visible in real
-            # schedule
-            sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
-            sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
+        # Swap schedules(class) which enables change to be visible in real
+        # schedule
+        sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
+        sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
+        if self.status == True and make_instance == True:
 
             if self.permanent == True:
                 today = datetime.datetime.today().date()
@@ -312,10 +321,15 @@ class Swap(models.Model):
 
         # save current state if reverse is used
         if make_instance == False:
-            follow_schedule_1 = Schedule.objects.get(schedule=sch_1)
-            follow_schedule_2 = Schedule.objects.get(schedule=sch_2)
-            follow_schedule_1.delete()
-            follow_schedule_2.delete()
+            follow_up_1 = sch_1.schedule
+            sch_1.schedule = None
+            sch_1.save()
+            follow_up_1.delete()
+
+            follow_up_2 = sch_2.schedule
+            sch_2.schedule = None
+            sch_2.save()
+            follow_up_2.delete()
 
         super(Swap, self).save(*args, **kwargs)
 

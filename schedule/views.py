@@ -17,7 +17,8 @@ from schedule.utils import *
 def index(request):
     groups = User_profile.objects.get(user=request.user).user_groups
     # user can be in more groups so distinct is needed
-    users = User_profile.objects.filter(user_groups__in=groups.all()).distinct()
+    users = User_profile.objects.filter(
+        user_groups__in=groups.all()).distinct()
     # generate schedule in advance if it does not exist
     for user in users:
         user.generate_schedule()
@@ -314,13 +315,74 @@ def add_shift(request):
     })
 
 
-def swaps(request, group_id):
-    pending_swaps = None
+@login_required
+def confirm_swap(request, group_id, swap_id):
 
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    try:
+        swap = Swap.objects.get(pk=swap_id)
+        swap.status = True
+        swap.resolved = True
+        swap.save()
+        messages.success(request, _('Swap was successfully confirmed!'))
+    except:
+        messages.error(request, _('Swap was not confirmed!'))
+
+    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+
+
+@login_required
+def reject_swap(request, group_id, swap_id):
+
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    swap = Swap.objects.get(pk=swap_id)
+    try:
+        swap.status = False
+        swap.resolved = True
+        swap.save()
+        messages.success(request, _('Swap was successfully rejected!'))
+    except:
+        messages.error(request, _('Swap was not rejected!'))
+
+    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+
+
+@login_required
+def revert_swap(request, group_id, swap_id):
+
+    if not request.user.is_staff or not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    swap = Swap.objects.get(pk=swap_id)
+    try:
+        swap.revert()
+        messages.success(request, _('Swap was successfully erased!'))
+    except:
+        messages.error(request, _('Swap was not reverted!'))
+
+    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+
+
+@login_required
+def swaps(request, group_id):
     # get all groups user is in
     group = Group.objects.get(pk=group_id)
+
+    if request.user.is_staff or request.user.is_superuser:
+        pending_swaps = Swap.objects.filter(resolved=False, group=group)
+        resolved_swaps = Swap.objects.filter(
+            resolved=True, group=group)
+    else:
+        pending_swaps = Swap.objects.filter(resolved=False, user=request.user)
+        resolved_swaps = Swap.objects.filter(resolved=True, group=group, user=request.user)
+
     # get all people user is superior and dont show logged user
-    employees = User_profile.objects.filter(user_groups=group).exclude(user=request.user)
+    employees = User_profile.objects.filter(
+        user_groups=group).exclude(user=request.user)
 
     events_others = make_events(employees, request.user)
     # If its supervisor then he can change all shift of his employees
@@ -334,21 +396,25 @@ def swaps(request, group_id):
         if form.is_valid():
             data = form.cleaned_data
             confirmation_status = False
+            resolved = False
             if request.user.is_staff or request.user.is_superuser:
                 confirmation_status = True
+                resolved = True
             try:
                 Swap.objects.create(
                     schedule_1=data["schedule_1"],
                     schedule_2=data["schedule_2"],
+                    group=group,
                     user=request.user,
                     date=datetime.datetime.today().date(),
                     permanent=data["permanent"],
-                    status=confirmation_status
+                    status=confirmation_status,
+                    resolved=resolved
                 )
                 messages.success(request, _('Swap was successfully sent!'))
             except:
                 messages.error(request, _('Swap was not created!'))
-            return HttpResponseRedirect(reverse('swaps_view', kwargs={ "group_id": group_id }))
+            return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
         else:
             messages.error(request, _('Please correct the error above.'))
     else:
@@ -357,6 +423,7 @@ def swaps(request, group_id):
         "user": request.user.user_profile,
         "group": group,
         "pending_swaps": pending_swaps,
+        "resolved_swaps": resolved_swaps,
         "events_others": events_others,
         "events_logged": events_logged,
         "form": form,

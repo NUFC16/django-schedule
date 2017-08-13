@@ -10,7 +10,7 @@
   {# Button for adding users #}
   <a href="{% url 'add_user_view' %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add user' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
   </h1>
-<table class="table table-striped">
+<table class="table">
   <thead>
     <tr>
       <th class="text-center">{% trans "First and last name" %}</th>
@@ -20,7 +20,7 @@
       <th class="text-center">{% trans "Actions" %}</th>
     </tr>
   </thead>
-  <tbody class="text-center">
+  <tbody class="text-center vertical-alignment-middle">
     {% for employee in employees %}
       <tr>
         <td>
