@@ -273,8 +273,8 @@ class Swap(models.Model):
         self.delete()
 
     def save(self, make_instance=True, *args, **kwargs):
-        # Swap schedules(class) which enables change to be visible in real
-        # schedule
+        # Swap schedules(class) which enables change to be 
+        # visible in real schedule
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
         if self.status == True and make_instance == True:

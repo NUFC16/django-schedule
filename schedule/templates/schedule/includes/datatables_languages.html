@@ -1,0 +1,32 @@
+{% load i18n %}
+  "language": {
+      "emptyTable":     "{% trans 'No available data' %}",
+      "info":           "{% trans 'Showing _START_ to _END_ of _TOTAL_ entries' %}",
+      "infoEmpty":      "{% trans 'No results' %}",
+      "infoFiltered":   "{% trans '(from total _MAX_)' %}",
+      "infoPostFix":    "",
+      "thousands":      ".",
+      "lengthMenu":     "{% trans 'Show _MENU_ entries' %}",
+      "loadingRecords": "{% trans 'Loading...' %}",
+      "processing":     "{% trans 'Processing...' %}",
+      "search":         "",
+      "searchPlaceholder": "{% trans 'Search' %}",
+      "zeroRecords":    "{% trans 'No result' %}",
+      "paginate": {
+          "first":      "{% trans 'First' %}",
+          "last":       "{% trans 'Last' %}",
+          "next":       "{% trans 'Next' %}",
+          "previous":   "{% trans 'Previous' %}"
+      },
+      "lengthMenu": '{% trans "Show" %}: <select class="form-control input-sm">'+
+        '<option value="10">10</option>'+
+        '<option value="25">25</option>'+
+        '<option value="50">50</option>'+
+        '<option value="100">100</option>'+
+        '<option value="-1">{% trans "All" %}</option>'+
+        '</select>&nbsp{% trans "entries" %}',
+      "aria": {
+          "sortAscending":  "{% trans ': activate to sort ascending' %}",
+          "sortDescending": "{% trans ': activate to sort descending' %}"
+      }
+  },

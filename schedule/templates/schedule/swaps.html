@@ -50,6 +50,29 @@
   <script type="text/javascript">
 
     $(document).ready(function() {
+        $('#resolved_table').DataTable({
+          rowReorder: {
+            selector: 'td:nth-child(2)'
+          },
+          searching: false,
+          pageLength: 5,
+          lengthChange: false,
+          responsive: true,
+          {% include "schedule/includes/datatables_languages.html" %}
+        });
+        $('#pending_table').DataTable({
+          rowReorder: {
+            selector: 'td:nth-child(2)'
+          },
+          searching: false,
+          pageLength: 5,
+          lengthChange: false,
+          responsive: true,
+          {% include "schedule/includes/datatables_languages.html" %}
+        });
+    });
+
+    $(document).ready(function() {
       
       $('#calendar2').fullCalendar({
         locale: 'hr',

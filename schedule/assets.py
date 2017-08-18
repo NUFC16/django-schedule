@@ -10,6 +10,7 @@ schedule_less_css = Bundle(
 
 schedule_css = Bundle(
     'schedule/css/login_custom.css',
+    'schedule/css/datatables.min.css',
     'schedule/lib/fullcalendar3/dist/fullcalendar.css',
     schedule_less_css,
     filters='cssmin',
@@ -26,6 +27,7 @@ uncompressed_js = [
 schedule_js = Bundle(
     'schedule/lib/moment/moment.js',
     'schedule/lib/jquery/jquery-2.2.0.js',
+    'schedule/js/datatables.min.js',
     'schedule/lib/fullcalendar3/dist/fullcalendar.js',
     'schedule/lib/fullcalendar3/dist/locale-all.js',
     'schedule/less/vendor/bootstrap3/dist/js/bootstrap.js',
