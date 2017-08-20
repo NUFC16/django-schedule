@@ -83,7 +83,6 @@
         },
         minTime: "07:00:00",
         maxTime: "23:00:00",
-        allDaySlot: false,
         slotLabelFormat:"HH:mm", // 0-24 on y-axis
         timeFormat: 'H(:mm)',
         firstDay: 1, // first day of week is Monday
@@ -93,14 +92,24 @@
         defaultView: 'agendaWeek',
         events: [
           {% for event in events_logged %}
-            {
-              id: '{{ event.id }}',
-              title: '{{ event.title }}',
-              start: '{{ event.time_from }}',
-              end: '{{ event.time_until }}',
-              // color is green
-              color: '#32CD32',
-            },
+            {% if event.time_until %}
+              {
+                id: '{{ event.id }}',
+                title: '{{ event.title }}',
+                start: '{{ event.time_from }}',
+                end: '{{ event.time_until }}',
+                // color is green
+                color: '#32CD32',
+              },
+            {% else %}
+              {
+                  id: '{{ event.id }}',
+                  title: '{{ event.title }}',
+                  start: '{{ event.time_from }}',
+                  end: '{{ event.time_until }}',
+                  color: '#32CD32',
+                },
+            {% endif %}
           {% endfor %}
           ],
           // Onclick we choose shift
@@ -122,7 +131,6 @@
           },
           minTime: "07:00:00",
           maxTime: "23:00:00",
-          allDaySlot: false,
           slotLabelFormat:"HH:mm", // 0-24 on y-axis
           timeFormat: 'H(:mm)',
           firstDay: 1, // first day of week is Monday

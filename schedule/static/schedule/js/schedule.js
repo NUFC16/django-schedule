@@ -64,10 +64,16 @@ DS = function() {
   }
 
   function chooseSwapShift(shift_event, calendar_id) {
-  	var start = $.fullCalendar.formatDate(shift_event.start,'HH:mm');
-    var end = $.fullCalendar.formatDate(shift_event.end,'HH:mm');
+  	var title;
     var date = shift_event._start.format('DD-MM-YYYY');
-    var title = shift_event.title + " " + date + " <br>" + start + "-" + end ;
+
+  	if (!shift_event.end) {
+	    title = shift_event.title + " " + date;
+  	} else {
+	  	var start = $.fullCalendar.formatDate(shift_event.start,'HH:mm');
+	    var end = $.fullCalendar.formatDate(shift_event.end,'HH:mm');
+    	title = shift_event.title + " " + date + " <br>" + start + "-" + end ;
+  	}
 
     var btn_id = calendar_id+'_btn'
 

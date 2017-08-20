@@ -2,8 +2,7 @@ from schedule.models import Schedule, Week_shift
 from django.core.urlresolvers import reverse
 import datetime
 
-
-def make_events(users, logged_user):
+def make_events(users, logged_user, free_day_render=False):
     event_list = []
     color = ""
     for user in users:
@@ -17,6 +16,15 @@ def make_events(users, logged_user):
                     "title": user.user.first_name + ' ' + user.user.last_name,
                     "time_from": schedule.get_string_from(),
                     "time_until": schedule.get_string_until(),
+                    "profile_url": reverse('employee_view', kwargs={'employee_id': user.id}),
+                    "color": color,
+                })
+            elif free_day_render:
+                event_list.append({
+                    "id": schedule.id,
+                    "title": user.user.first_name + ' ' + user.user.last_name,
+                    "time_from": schedule.date.strftime('%Y-%m-%d'),
+                    "time_until": None,
                     "profile_url": reverse('employee_view', kwargs={'employee_id': user.id}),
                     "color": color,
                 })

@@ -384,12 +384,13 @@ def swaps(request, group_id):
     employees = User_profile.objects.filter(
         user_groups=group).exclude(user=request.user)
 
-    events_others = make_events(employees, request.user)
+    # True is for free day render
+    events_others = make_events(employees, request.user, True)
     # If its supervisor then he can change all shift of his employees
     events_logged = events_others
     if not request.user.is_staff or not request.user.is_superuser:
         # If its employee he can only swap his shift for someone elses
-        events_logged = make_events([request.user.user_profile], request.user)
+        events_logged = make_events([request.user.user_profile], request.user, True)
 
     if request.method == 'POST':
         form = SwapForm(request.POST)

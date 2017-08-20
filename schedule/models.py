@@ -213,8 +213,10 @@ class Schedule(models.Model):
     time_until = models.TimeField(null=True, blank=True)
     user = models.ForeignKey(User_profile)
 
-    def save(self, make_instance=False, *args, **kwargs):
-        if (self.time_from == None or self.time_until == None) and self.user.user_shift != None:
+    def save(self, make_instance=False, is_swap=False, *args, **kwargs):
+        # is_swap determines if save is called on swap (this lets us swap free
+        # days of users)
+        if (self.time_from == None or self.time_until == None) and self.user.user_shift != None and not is_swap:
             temp_shift = self.user.user_shift.get_day(self.date.weekday())
 
             self.time_from = temp_shift.time_from
@@ -226,16 +228,19 @@ class Schedule(models.Model):
                 old_schedule = Schedule.objects.get(pk=self.pk)
                 new_followup = self
                 new_followup.pk = None
-                new_followup.save()
+                new_followup.save(is_swap=is_swap)
                 old_schedule.schedule = new_followup
-                old_schedule.save()
+                old_schedule.save(is_swap=is_swap)
             except:
                 pass
         # Call the "real" save() method.
         super(Schedule, self).save(*args, **kwargs)
 
     def get_time_shift(self):
-        return self.time_from.strftime('%H:%M') + " - " + self.time_until.strftime('%H:%M')
+        if self.time_until:
+            return self.time_from.strftime('%H:%M') + " - " + self.time_until.strftime('%H:%M')
+        else:
+            return None
 
     def get_string_from(self):
         if self.time_from:
@@ -273,7 +278,7 @@ class Swap(models.Model):
         self.delete()
 
     def save(self, make_instance=True, *args, **kwargs):
-        # Swap schedules(class) which enables change to be 
+        # Swap schedules(class) which enables change to be
         # visible in real schedule
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
@@ -316,8 +321,23 @@ class Swap(models.Model):
                     sc_2.save()
 
             sch_1.user, sch_2.user = sch_2.user, sch_1.user
-            sch_1.save(make_instance=make_instance)
-            sch_2.save(make_instance=make_instance)
+            sch_1.save(make_instance=make_instance, is_swap=True)
+            sch_2.save(make_instance=make_instance, is_swap=True)
+
+            # if days are different
+            if sch_1.date != sch_2.date:
+                # above were swapped free days
+                # here we are swaping working shifts of two users
+                # that way schedule keeps its balance
+                working_shift_1 = Schedule.objects.filter(
+                    user=sch_1.user, date=sch_1.date, schedule=None).exclude(time_from=None)[0]
+
+                working_shift_2 = Schedule.objects.filter(
+                    user=sch_2.user, date=sch_2.date, schedule=None).exclude(time_from=None)[0]
+
+                working_shift_1.user, working_shift_2.user = working_shift_2.user, working_shift_1.user
+                working_shift_1.save(make_instance=make_instance, is_swap=True)
+                working_shift_2.save(make_instance=make_instance, is_swap=True)
 
         # save current state if reverse is used
         if make_instance == False:
