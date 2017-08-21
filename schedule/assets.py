@@ -10,7 +10,9 @@ schedule_less_css = Bundle(
 
 schedule_css = Bundle(
     'schedule/css/login_custom.css',
-    'schedule/css/datatables.min.css',
+    'schedule/css/responsive.dataTables.min.css',
+    'schedule/css/rowGroup.dataTables.min.css',
+    'schedule/css/rowReorder.dataTables.min.css',
     'schedule/lib/fullcalendar3/dist/fullcalendar.css',
     schedule_less_css,
     filters='cssmin',

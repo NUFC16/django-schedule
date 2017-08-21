@@ -98,7 +98,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'hr-HR'
 
 TIME_ZONE = 'UTC'
 
@@ -144,3 +144,9 @@ STATICFILES_FINDERS += ('django_assets.finders.AssetsFinder',)
 
 # crispy-forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# ------------------------------- Translation -------------------------------
+
+LOCALE_PATHS = [
+    os.path.join(SITE_ROOT, 'schedule'),
+]

@@ -1,0 +1,426 @@
+# CROATIAN TRANSLATION FOR DJANGO SCHEDULE
+# Copyright (C) 2017
+# This file is distributed under the same license as the PACKAGE package.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-21 12:12+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: forms.py:13
+msgid "The two password fields didn't match."
+msgstr "Unesena lozinka se ne poklapa"
+
+#: forms.py:15
+msgid "Password"
+msgstr "Lozinka"
+
+#: forms.py:17
+msgid "Password confirmation"
+msgstr "Potvrda lozinke"
+
+#: forms.py:19
+msgid "Enter the same password as above, for verification."
+msgstr "Unesite istu lozinku kao iznad"
+
+#: forms.py:155
+msgid "Submit"
+msgstr "Pošalji"
+
+#: forms.py:190 forms.py:192
+msgid "Pick a shift!"
+msgstr "Odaberite smjenu!"
+
+#: forms.py:228 forms.py:230
+msgid "Picked date is in the past"
+msgstr "Odabrani datum je u prošlosti"
+
+#: forms.py:233
+msgid "Picked shifts are not swapable!"
+msgstr "Odabrane smjene nije moguće zamijeniti"
+
+#: models.py:108
+msgid "Male"
+msgstr "Muško"
+
+#: models.py:109
+msgid "Female"
+msgstr "Žensko"
+
+#: models.py:207
+msgid "Parent schedule"
+msgstr "Nadređeni raspored"
+
+#: templates/schedule/add_shift.html:12
+msgid "Create new shift"
+msgstr "Stvori novi smjenu"
+
+#: templates/schedule/add_user.html:12
+msgid "Send"
+msgstr "Pošalji"
+
+#: templates/schedule/base.html:35
+msgid "Home"
+msgstr "Početna"
+
+#: templates/schedule/base.html:42
+msgid "My profile"
+msgstr "Moj profil"
+
+#: templates/schedule/base.html:45
+msgid "Overview of groups and people"
+msgstr "Pregled grupa i ljudi"
+
+#: templates/schedule/base.html:46
+msgid "Add employee"
+msgstr "Dodaj zaposlenika"
+
+#: templates/schedule/base.html:49
+msgid "Swaps"
+msgstr "Zamjene"
+
+#: templates/schedule/base.html:59
+msgid "Logout"
+msgstr "Odjava"
+
+#: templates/schedule/employee_info.html:14
+msgid "Name"
+msgstr "Ime"
+
+#: templates/schedule/employee_info.html:19
+msgid "Last name"
+msgstr "Prezime"
+
+#: templates/schedule/employee_info.html:24
+msgid "Date of birth"
+msgstr "Datum rođenja"
+
+#: templates/schedule/employee_info.html:29
+msgid "Gender"
+msgstr "Spol"
+
+#: templates/schedule/employee_info.html:34
+msgid "Date of employment"
+msgstr "Datum zaposlenja"
+
+#: templates/schedule/employee_info.html:39
+msgid "Number of hours this month"
+msgstr "Broj radnih sati za tekući mjesec"
+
+#: templates/schedule/employee_info.html:44
+msgid "Calculated paycheck"
+msgstr "Približna plaća"
+
+#: templates/schedule/includes/datatables_languages.html:3
+msgid "No available data"
+msgstr "Nema dostupnih podataka"
+
+#: templates/schedule/includes/datatables_languages.html:4
+msgid "Showing _START_ to _END_ of _TOTAL_ entries"
+msgstr "_START_ - _END_ od _TOTAL_ entries"
+
+#: templates/schedule/includes/datatables_languages.html:5
+msgid "No results"
+msgstr "Nema rezultata"
+
+#: templates/schedule/includes/datatables_languages.html:6
+msgid "(from total _MAX_)"
+msgstr "(od ukupno _MAX_)"
+
+#: templates/schedule/includes/datatables_languages.html:9
+msgid "Show _MENU_ entries"
+msgstr "Prikaži _MENU_"
+
+#: templates/schedule/includes/datatables_languages.html:10
+msgid "Loading..."
+msgstr ""
+
+#: templates/schedule/includes/datatables_languages.html:11
+msgid "Processing..."
+msgstr "Učitavanje..."
+
+#: templates/schedule/includes/datatables_languages.html:13
+msgid "Search"
+msgstr "Pretraga"
+
+#: templates/schedule/includes/datatables_languages.html:14
+msgid "No result"
+msgstr "Nema rezultata"
+
+#: templates/schedule/includes/datatables_languages.html:16
+msgid "First"
+msgstr "Prva"
+
+#: templates/schedule/includes/datatables_languages.html:17
+msgid "Last"
+msgstr "Zadnja"
+
+#: templates/schedule/includes/datatables_languages.html:18
+msgid "Next"
+msgstr "Sljedeća"
+
+#: templates/schedule/includes/datatables_languages.html:19
+msgid "Previous"
+msgstr "Prethodna"
+
+#: templates/schedule/includes/datatables_languages.html:21
+msgid "Show"
+msgstr "Prikaži"
+
+#: templates/schedule/includes/datatables_languages.html:26
+msgid "All"
+msgstr "Sve"
+
+#: templates/schedule/includes/datatables_languages.html:27
+msgid "entries"
+msgstr "zapisa"
+
+#: templates/schedule/includes/datatables_languages.html:29
+msgid ": activate to sort ascending"
+msgstr ": uključi za uzlazno sortiranje"
+
+#: templates/schedule/includes/datatables_languages.html:30
+msgid ": activate to sort descending"
+msgstr ": uključi za silazno sortiranje"
+
+#: templates/schedule/includes/delete_modal.html:16
+msgid "Delete"
+msgstr "Obriši"
+
+#: templates/schedule/includes/delete_modal.html:17
+msgid "Close"
+msgstr "Zatvori"
+
+#: templates/schedule/includes/permanent.html:3
+msgid "Make swap permanent"
+msgstr "Učini promjenu trajnom"
+
+#: templates/schedule/includes/schedule_1.html:7
+msgid "Pick shift to change for"
+msgstr "Odaberite smjenu za koju se želite mijenjati"
+
+#: templates/schedule/includes/schedule_2.html:7
+msgid "Pick a shift"
+msgstr "Odaberi smjenu"
+
+#: templates/schedule/includes/schedule_2.html:9
+msgid "Pick your shift"
+msgstr "Odaberite svoju smjenu"
+
+#: templates/schedule/includes/swap_table.html:6
+msgid "Swap id"
+msgstr "ID zamjene"
+
+#: templates/schedule/includes/swap_table.html:7
+msgid "Date of swap"
+msgstr "Datum zamjene"
+
+#: templates/schedule/includes/swap_table.html:8
+msgid "Sender name"
+msgstr "Ime podnositelja zahtjeva"
+
+#: templates/schedule/includes/swap_table.html:9
+msgid "Receiver name"
+msgstr "Ime sudionika zahtjeva"
+
+#: templates/schedule/includes/swap_table.html:10
+msgid "Sender date"
+msgstr "Datum smjene podnositelja"
+
+#: templates/schedule/includes/swap_table.html:11
+msgid "Receiver date"
+msgstr "Datum smjene sudionika"
+
+#: templates/schedule/includes/swap_table.html:12
+msgid "Sender shift time"
+msgstr "Smjena podnositelja"
+
+#: templates/schedule/includes/swap_table.html:13
+msgid "Receiver shift time"
+msgstr "Smjena sudionika"
+
+#: templates/schedule/includes/swap_table.html:16
+#: templates/schedule/overview.html:20 templates/schedule/overview.html:55
+msgid "Actions"
+msgstr "Akcije"
+
+#: templates/schedule/includes/swap_table.html:48
+msgid "Revert swap"
+msgstr "Poništi zamjenu"
+
+#: templates/schedule/includes/swap_table.html:50
+msgid "Approve swap"
+msgstr "Odobri zamjenu"
+
+#: templates/schedule/includes/swap_table.html:53
+msgid "Confirm swap"
+msgstr "Prihvati zamjenu"
+
+#: templates/schedule/includes/swap_table.html:54
+msgid "Reject swap"
+msgstr "Odbij zamjenu"
+
+#: templates/schedule/overview.html:9
+msgid "People"
+msgstr "Ljudi"
+
+#: templates/schedule/overview.html:11
+msgid "Add user"
+msgstr "Dodaj korisnika"
+
+#: templates/schedule/overview.html:16
+msgid "First and last name"
+msgstr "Ime i prezime"
+
+#: templates/schedule/overview.html:17 templates/schedule/overview.html:45
+msgid "Groups"
+msgstr "Grupe"
+
+#: templates/schedule/overview.html:18
+msgid "Employee shift"
+msgstr "Smjena zaposlenika"
+
+#: templates/schedule/overview.html:19
+msgid "Number of hours(month)"
+msgstr "Broj odrađenih sati (mjesec)"
+
+#: templates/schedule/overview.html:38
+msgid "Edit user"
+msgstr "Izmjeni korisnika"
+
+#: templates/schedule/overview.html:47
+msgid "Add group"
+msgstr "Dodaj grupu"
+
+#: templates/schedule/overview.html:52
+msgid "Title"
+msgstr "Naslov"
+
+#: templates/schedule/overview.html:53
+msgid "Number of members"
+msgstr "Broj članova"
+
+#: templates/schedule/overview.html:54
+msgid "Shifts"
+msgstr "Smjene"
+
+#: templates/schedule/overview.html:70
+msgid "Add new shift"
+msgstr "Dodaj novu smjenu"
+
+#: templates/schedule/overview.html:72
+msgid "Edit group"
+msgstr "Izmjeni grupu"
+
+#: templates/schedule/overview.html:74
+msgid "Are you sure you want to delete this group?"
+msgstr "Jeste li sigurni da želite obrisati ovu grupu?"
+
+#: templates/schedule/overview.html:74
+msgid "Delete group"
+msgstr "Obriši grupu"
+
+#: templates/schedule/shift_view.html:9
+msgid "Update shift"
+msgstr "Ažuriraj smjenu"
+
+#: templates/schedule/shift_view.html:11
+msgid "Are you sure you want to delete this shift?"
+msgstr "Jeste li sigurni da želite obrisati ovu smjenu?"
+
+#: templates/schedule/shift_view.html:11
+msgid "Delete shift"
+msgstr "Obriši smjenu"
+
+#: templates/schedule/swaps.html:9
+msgid "Resolved swaps"
+msgstr "Riješene zamjene"
+
+#: templates/schedule/swaps.html:14
+msgid "Pending swaps"
+msgstr "Zamjene na čekanju"
+
+#: views.py:66
+msgid "Your profile was successfully created!"
+msgstr "Vaš profil je uspješno kreiran"
+
+#: views.py:69 views.py:113 views.py:180 views.py:309
+msgid "Please correct the error below."
+msgstr "Molimo vas ispravite pogrešku ispod"
+
+#: views.py:110
+msgid "Your profile was successfully updated!"
+msgstr "Vaš profil je uspješno izmjenjen!"
+
+#: views.py:170
+msgid "Group was successfully added!"
+msgstr "Grupa je uspješno dodana!"
+
+#: views.py:177
+msgid "Group was successfully edited!"
+msgstr "Grupa je uspješno izmjenjena!"
+
+#: views.py:198
+msgid "Group was successfully deleted!"
+msgstr "Grupa je uspješno obrisana!"
+
+#: views.py:200
+msgid "Group was not deleted"
+msgstr "Grupa nije obrisana"
+
+#: views.py:259
+msgid "Shift was successfully deleted!"
+msgstr "Grupa je uspješno obrisana"
+
+#: views.py:261
+msgid "Shift was not deleted"
+msgstr "Smjena nije obrisana"
+
+#: views.py:306
+msgid "Shift was successfully added!"
+msgstr "Smjena je uspješno dodana"
+
+#: views.py:329
+msgid "Swap was successfully confirmed!"
+msgstr "Zamjena je uspješno potvrđena!"
+
+#: views.py:331
+msgid "Swap was not confirmed!"
+msgstr "Zamjena je neuspješno potvrđena!"
+
+#: views.py:347
+msgid "Swap was successfully rejected!"
+msgstr "Zamjena je uspješno odbijena!"
+
+#: views.py:349
+msgid "Swap was not rejected!"
+msgstr "Zamjena nije uspješno odbijena"
+
+#: views.py:363
+msgid "Swap was successfully erased!"
+msgstr "Zamjena je uspješno obrisana"
+
+#: views.py:365
+msgid "Swap was not reverted!"
+msgstr "Zamjena je neuspješno poništena"
+
+#: views.py:415
+msgid "Swap was successfully sent!"
+msgstr "Zahtjev za zamjenom je uspješno poslan"
+
+#: views.py:417
+msgid "Swap was not created!"
+msgstr "Kreiranje zamjene je bilo neuspješno!"
+
+#: views.py:420
+msgid "Please correct the error above."
+msgstr "Molimo vas ispravite pogrešku iznad."
