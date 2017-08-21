@@ -231,8 +231,16 @@ def shift_view(request, shift_id):
                 current_until = datetime.datetime.strptime(
                     current_until, '%H:%M:%S').time()
 
-            setattr(getattr(shift, day), 'time_from', current_from)
-            setattr(getattr(shift, day), 'time_until', current_until)
+            try:
+                day_object = getattr(shift, day)
+                setattr(day_object, 'time_from', current_from)
+                setattr(day_object, 'time_until', current_until)
+                day_object.save()
+            except:
+                messages.error(request, _('Shift was not updated!'))
+                break
+            if day == form_labels[-1][0]:
+                messages.success(request, _('Shift was successfully updated!'))
 
     events = make_empty_events(shift)
     return render(request, "schedule/shift_view.html", {

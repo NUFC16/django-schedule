@@ -2,6 +2,9 @@
 {% load i18n sekizai_tags %}
 
 {% block "content" %} 
+  {# info message if shift was updated #}
+  {% include "schedule/includes/info_messages.html" %}
+  
   <div id='calendar'></div>
 
   <form class="uniForm" method="post">
