@@ -42,7 +42,7 @@
           </td>
 
           {% if user.user.is_staff or user.user.is_superuser %}
-            <td>
+            <td class="actions-table">
               {% if resolved %}
                 {% if swap.status %}
                   <a href="{% url 'revert_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-danger" title="{% trans 'Revert swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>

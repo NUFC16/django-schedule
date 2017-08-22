@@ -109,14 +109,14 @@ class User_profile(models.Model):
         ('F', _('Female')),
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_groups = models.ManyToManyField(Group)
-    user_shift = models.ForeignKey(Week_shift, null=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+    user_groups = models.ManyToManyField(Group, verbose_name=_('User groups'))
+    user_shift = models.ForeignKey(Week_shift, null=True, verbose_name=_('Week shift'))
+    date_of_birth = models.DateField(null=True, blank=True, verbose_name=_('Date of birth'))
     gender = models.CharField(
-        max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
-    date_of_employment = models.DateField(null=True, blank=True)
+        max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name=_('Gender'))
+    date_of_employment = models.DateField(null=True, blank=True, verbose_name=_('Date of employment'))
     default_wage = models.DecimalField(
-        decimal_places=2, max_digits=5, default=0, blank=True)
+        decimal_places=2, max_digits=5, default=0, blank=True, verbose_name=_('Default wage'))
 
     def __init__(self, *args, **kwargs):
         super(User_profile, self).__init__(*args, **kwargs)
