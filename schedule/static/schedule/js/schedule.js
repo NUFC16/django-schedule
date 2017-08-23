@@ -95,3 +95,16 @@ DS = function() {
     chooseSwapShift: chooseSwapShift,
   };
 }();
+
+$( document ).ready(function() {
+  $('#id_user_groups').selectpicker();
+  $('#id_date_of_birth').datepicker({
+    changeMonth: true,
+    changeYear: true,
+    dateFormat: 'yy-dd-mm',
+    yearRange: "-100:-16",
+  });
+  $('#id_date_of_employment').datepicker({
+    dateFormat: 'yy-dd-mm',
+  });
+});

@@ -14,6 +14,8 @@ schedule_css = Bundle(
     'schedule/css/rowGroup.dataTables.min.css',
     'schedule/css/rowReorder.dataTables.min.css',
     'schedule/lib/fullcalendar3/dist/fullcalendar.css',
+    'schedule/lib/bootstrap-select-1.12.4/dist/css/bootstrap-select.css',
+    'schedule/lib/jquery-ui-1.12.1.custom/jquery-ui.css',
     schedule_less_css,
     filters='cssmin',
     output='schedule/gen/schedule.%(version)s.css'
@@ -34,6 +36,8 @@ schedule_js = Bundle(
     'schedule/lib/fullcalendar3/dist/locale-all.js',
     'schedule/less/vendor/bootstrap3/dist/js/bootstrap.js',
     'schedule/js/schedule.js',
+    'schedule/js/jquery-ui.js',
+    'schedule/lib/bootstrap-select-1.12.4/dist/js/bootstrap-select.js',
     *uncompressed_js,
     filters='jsmin',
     output='schedule/gen/no-out.min.js'

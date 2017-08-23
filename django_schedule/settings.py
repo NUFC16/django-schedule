@@ -98,7 +98,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'hr-HR'
+LANGUAGE_CODE = 'hr'
 
 TIME_ZONE = 'UTC'
 

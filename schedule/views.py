@@ -181,6 +181,7 @@ def add_and_edit_group(request, group_id=None):
     else:
         form = GroupForm(initial=data)
 
+    form.fields["supervisor"].label_from_instance = lambda obj: "%s" % ( obj.first_name + " " + obj.last_name)
     return render(request, "schedule/add_group.html", {
         "user": request.user.user_profile,
         "form": form,
