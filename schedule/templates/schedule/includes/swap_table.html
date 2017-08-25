@@ -44,11 +44,15 @@
           {% if user.user.is_staff or user.user.is_superuser %}
             <td class="actions-table">
               {% if resolved %}
-                {% if swap.status %}
-                  <a href="{% url 'revert_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-danger" title="{% trans 'Revert swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
+                {% if not swap.schedule_1.is_past and not swap.schedule_2.is_past %}
+                  {% if swap.status %}
+                      <a href="{% url 'revert_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-danger" title="{% trans 'Revert swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
+                  {% else %}
+                    <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Approve swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
+                  {% endif %}
                 {% else %}
-                  <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Approve swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
-                {% endif %}
+                  <button type="button" class="btn transparent-bgcolor" disabled><span class="glyphicon glyphicon-lock"></span></button>
+               {% endif %}
               {% else %}
                 <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Confirm swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
                 <a href="{% url 'reject_swap_view' group_id=group.pk swap_id=swap.pk %}"><button class="btn btn-danger" title="{% trans 'Reject swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>

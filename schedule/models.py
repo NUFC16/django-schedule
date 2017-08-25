@@ -236,6 +236,9 @@ class Schedule(models.Model):
         # Call the "real" save() method.
         super(Schedule, self).save(*args, **kwargs)
 
+    def is_past(self):
+        return datetime.datetime.today().date() >= self.date
+
     def get_time_shift(self):
         if self.time_until:
             return self.time_from.strftime('%H:%M') + " - " + self.time_until.strftime('%H:%M')
