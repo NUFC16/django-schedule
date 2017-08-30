@@ -51,14 +51,17 @@ def add_user(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_data = user_form.cleaned_data
             profile_data = profile_form.cleaned_data
-            u = User.objects.create(
+
+            u = User.objects.create_user(
                 username=user_data['username'],
                 first_name=user_data['first_name'],
                 last_name=user_data['last_name'],
-                password=user_data['password1'],
-                is_staff=user_data['is_staff'],
-                is_superuser=user_data['is_superuser'],
+                password=user_data['password1']
             )
+            u.is_staff = user_data['is_staff']
+            u.is_superuser = user_data['is_superuser']
+            u.save()
+            
             up = User_profile.objects.get(user=u)
 
             field_attributes = [
