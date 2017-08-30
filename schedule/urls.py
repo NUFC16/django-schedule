@@ -6,6 +6,7 @@ urlpatterns = patterns(
     url(r'^$', index, name='index'),
     url(r'^(?P<employee_id>\d+)/info/$', employee_info, name='employee_view'),
     url(r'^add_user/$', add_user, name='add_user_view'),
+    url(r'^(?P<employee_id>\d+)/delete_user/$', delete_user, name='delete_user_view'),
     url(r'^(?P<employee_id>\d+)/edit_user/$', edit_user, name='edit_user_view'),
     url(r'^overview/$', groups_and_people, name='groups_and_people_view'),
     url(r'^add_group/$', add_and_edit_group, name='add_group_view'),

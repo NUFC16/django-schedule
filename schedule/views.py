@@ -39,13 +39,31 @@ def employee_info(request, employee_id):
 
 
 @login_required
+def delete_user(request, employee_id):
+    # Only superuser can delete employees
+    if not request.user.is_superuser:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    try:
+        employee = User_profile.objects.get(pk=employee_id)
+        employee.user.delete()
+        employee.delete()
+        messages.success(request, _('User was successfully deleted!'))
+    except:
+        messages.error(request, _('User was not deleted'))
+
+    return HttpResponseRedirect(reverse('groups_and_people_view'))
+
+
+@login_required
 def add_user(request):
     # Dont allow ordinary user to create users
     if not request.user.is_staff or not request.user.is_superuser:
         HttpResponseForbidden('<h1>Permission denied</h1>')
 
     if request.method == 'POST':
-        user_form = UserForm(request.POST, is_superuser=request.user.is_superuser)
+        user_form = UserForm(
+            request.POST, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
@@ -61,7 +79,7 @@ def add_user(request):
             u.is_staff = user_data['is_staff']
             u.is_superuser = user_data['is_superuser']
             u.save()
-            
+
             up = User_profile.objects.get(user=u)
 
             field_attributes = [
@@ -106,7 +124,8 @@ def edit_user(request, employee_id):
     }
 
     if request.method == 'POST':
-        user_form = EditUserForm(request.POST, is_superuser=request.user.is_superuser)
+        user_form = EditUserForm(
+            request.POST, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
@@ -132,7 +151,8 @@ def edit_user(request, employee_id):
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = EditUserForm(instance=employee.user, is_superuser=request.user.is_superuser)
+        user_form = EditUserForm(
+            instance=employee.user, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(initial=data_user_profile)
     return render(request, "schedule/add_user.html", {
         "user": request.user.user_profile,
@@ -152,7 +172,7 @@ def groups_and_people(request):
     groups = User_profile.objects.get(user=request.user).user_groups
     # get all people user is superior and dont show logged user
     employees = User_profile.objects.filter(
-        user_groups__in=groups.all()).distinct().exclude(user=request.user)
+        user_groups__in=groups.all(), user__is_superuser=False).distinct().exclude(user=request.user)
 
     return render(request, "schedule/overview.html", {
         "user": request.user.user_profile,
@@ -201,7 +221,8 @@ def add_and_edit_group(request, group_id=None):
     else:
         form = GroupForm(initial=data)
 
-    form.fields["supervisor"].label_from_instance = lambda obj: "%s" % ( obj.first_name + " " + obj.last_name)
+    form.fields["supervisor"].label_from_instance = lambda obj: "%s" % (
+        obj.first_name + " " + obj.last_name)
     return render(request, "schedule/add_group.html", {
         "user": request.user.user_profile,
         "form": form,
@@ -407,7 +428,8 @@ def swaps(request, group_id):
             resolved=True, group=group)
     else:
         pending_swaps = Swap.objects.filter(resolved=False, user=request.user)
-        resolved_swaps = Swap.objects.filter(resolved=True, group=group, user=request.user)
+        resolved_swaps = Swap.objects.filter(
+            resolved=True, group=group, user=request.user)
 
     # get all people user is superior and dont show logged user
     employees = User_profile.objects.filter(
@@ -419,7 +441,8 @@ def swaps(request, group_id):
     events_logged = events_others
     if not request.user.is_staff or not request.user.is_superuser:
         # If its employee he can only swap his shift for someone elses
-        events_logged = make_events([request.user.user_profile], request.user, True)
+        events_logged = make_events(
+            [request.user.user_profile], request.user, True)
 
     if request.method == 'POST':
         form = SwapForm(request.POST)
