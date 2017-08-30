@@ -23,11 +23,16 @@
         <tr bgcolor="{% if resolved and swap.status %}#58D68D{% elif resolved and not swap.status %}#F4511E{% endif %}">
           <td>{{ swap.pk }}</td>
           <td>{{ swap.date }}</td>
-          <td>{{ swap.schedule_1.user }}</td>
           <td>{{ swap.schedule_2.user }}</td>
-          <td>{{ swap.schedule_1.date }}</td>
+          <td>{{ swap.schedule_1.user }}</td>
           <td>{{ swap.schedule_2.date }}</td>
+          <td>{{ swap.schedule_1.date }}</td>
 
+          <td>
+            {% if swap.schedule_2.get_time_shift %}
+              {{ swap.schedule_2.get_time_shift }}
+            {% endif %}
+          </td>
 
           <td>
             {% if swap.schedule_1.get_time_shift %}
@@ -35,11 +40,6 @@
             {% endif %}
           </td>
 
-          <td>
-            {% if swap.schedule_2.get_time_shift %}
-              {{ swap.schedule_2.get_time_shift }}
-            {% endif %}
-          </td>
 
           {% if user.user.is_staff or user.user.is_superuser %}
             <td class="actions-table">
@@ -54,7 +54,9 @@
                   <button type="button" class="btn transparent-bgcolor" disabled><span class="glyphicon glyphicon-lock"></span></button>
                {% endif %}
               {% else %}
-                <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Confirm swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
+                {% if receiver_status %}
+                  <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Confirm swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
+                {% endif %}
                 <a href="{% url 'reject_swap_view' group_id=group.pk swap_id=swap.pk %}"><button class="btn btn-danger" title="{% trans 'Reject swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
               {% endif %}
             </td>

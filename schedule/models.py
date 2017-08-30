@@ -273,6 +273,8 @@ class Swap(models.Model):
     status = models.BooleanField(default=False)
     # if this field is true, supervisor made some action (approve/disapprove)
     resolved = models.BooleanField(default=False)
+    # receiver_status determines if swap is approved by other emoloyee
+    receiver_status = models.BooleanField(default=False)
 
     def revert(self):
         self.save(make_instance=False)

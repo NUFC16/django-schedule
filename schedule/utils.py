@@ -1,4 +1,4 @@
-from schedule.models import Schedule, Week_shift
+from schedule.models import Schedule, Week_shift, Swap
 from django.core.urlresolvers import reverse
 import datetime
 
@@ -50,3 +50,8 @@ def make_empty_events(shift):
 
         week_day = (week_day + 1) % 7
     return event_list
+
+def get_pending_swaps(user):
+    query_1 = Swap.objects.filter(resolved=False, schedule_1__user=user)
+    query_2 = Swap.objects.filter(resolved=False, schedule_2__user=user)
+    return query_1 | query_2

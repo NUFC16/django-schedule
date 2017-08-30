@@ -427,13 +427,13 @@ def swaps(request, group_id):
         resolved_swaps = Swap.objects.filter(
             resolved=True, group=group)
     else:
-        pending_swaps = Swap.objects.filter(resolved=False, user=request.user)
+        pending_swaps = get_pending_swaps(request.user.user_profile)
         resolved_swaps = Swap.objects.filter(
             resolved=True, group=group, user=request.user)
 
     # get all people user is superior and dont show logged user
     employees = User_profile.objects.filter(
-        user_groups=group).exclude(user=request.user)
+        user_groups=group, user__is_staff=False).exclude(user=request.user)
 
     # True is for free day render
     events_others = make_events(employees, request.user, True)
