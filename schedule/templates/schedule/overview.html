@@ -46,7 +46,9 @@
 {# List of groups #}
 <h1>{% trans "Groups" %}
 {# Button for adding groups #}
-<a href="{% url 'add_group_view' %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add group' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
+{% if user.user.is_superuser %}
+  <a href="{% url 'add_group_view' %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add group' %}"><span class="glyphicon glyphicon-plus"></span></button></a>
+{% endif %}
 </h1>
 <table id="groups_table" class="table table-striped">
   <thead>

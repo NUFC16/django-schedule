@@ -43,7 +43,7 @@
       </li>
       {% if request.user.is_active and request.user.is_staff %}
         <li><a href="{% url 'groups_and_people_view' %}">{% trans "Overview of groups and people" %}</a></li>
-        <li><a href="{% url 'add_user_view' %}">{% trans "Add employee" %}<span class="glyphicon glyphicon-plus divider-left"></span></a>
+        <li><a href="{% url 'add_user_view' %}">{% trans "Add employee" %}<span class="glyphicon glyphicon-plus divider-left"></span></a></li>
       {% endif %}
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">{% trans "Swaps" %}<span class="caret"></span></a>

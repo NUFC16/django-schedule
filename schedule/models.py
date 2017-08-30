@@ -34,7 +34,7 @@ class Day_shift(models.Model):
 
 
 class Week_shift(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, verbose_name=_('Shift name'))
     monday = models.ForeignKey(
         Day_shift, null=True, blank=True, related_name='+')
     tuesday = models.ForeignKey(
@@ -49,7 +49,7 @@ class Week_shift(models.Model):
         Day_shift, null=True, blank=True, related_name='+')
     sunday = models.ForeignKey(
         Day_shift, null=True, blank=True, related_name='+')
-    week_group = models.ForeignKey(Group)
+    week_group = models.ForeignKey(Group, verbose_name=_('Week group'))
 
     def save(self, *args, **kwargs):
         if self.monday == None:

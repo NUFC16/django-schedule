@@ -18,14 +18,13 @@
         },
         minTime: "07:00:00",
         maxTime: "23:00:00",
-        height: "auto",
+        // height: "auto",
         allDaySlot: false,
         editable: false,
         slotLabelFormat:"HH:mm", // 0-24 on y-axis
         timeFormat: 'H(:mm)',
         firstDay: 1, // first day of week is Monday
         navLinks: true, // can click day/week names to navigate views
-        editable: true,
         eventLimit: true, // allow "more" link when too many events
         events: [
         {% for event in events %}

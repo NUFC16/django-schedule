@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 15:35+0000\n"
+"POT-Creation-Date: 2017-08-27 14:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,6 +50,14 @@ msgstr "Odabrani datum je u prošlosti"
 #: forms.py:234
 msgid "Picked shifts are not swapable!"
 msgstr "Odabrane smjene nije moguće zamijeniti"
+
+#: models.py:37
+msgid "Shift name"
+msgstr "Ime smjene"
+
+#: models.py:52
+msgid "Week group"
+msgstr "Tjedna smjena"
 
 #: models.py:108
 msgid "Male"
@@ -261,23 +269,23 @@ msgid "Receiver shift time"
 msgstr "Smjena sudionika"
 
 #: templates/schedule/includes/swap_table.html:16
-#: templates/schedule/overview.html:22 templates/schedule/overview.html:57
+#: templates/schedule/overview.html:22 templates/schedule/overview.html:59
 msgid "Actions"
 msgstr "Akcije"
 
-#: templates/schedule/includes/swap_table.html:48
+#: templates/schedule/includes/swap_table.html:49
 msgid "Revert swap"
 msgstr "Poništi zamjenu"
 
-#: templates/schedule/includes/swap_table.html:50
+#: templates/schedule/includes/swap_table.html:51
 msgid "Approve swap"
 msgstr "Odobri zamjenu"
 
-#: templates/schedule/includes/swap_table.html:53
+#: templates/schedule/includes/swap_table.html:57
 msgid "Confirm swap"
 msgstr "Prihvati zamjenu"
 
-#: templates/schedule/includes/swap_table.html:54
+#: templates/schedule/includes/swap_table.html:58
 msgid "Reject swap"
 msgstr "Odbij zamjenu"
 
@@ -309,35 +317,35 @@ msgstr "Broj odrađenih sati (mjesec)"
 msgid "Edit user"
 msgstr "Izmjeni korisnika"
 
-#: templates/schedule/overview.html:49
+#: templates/schedule/overview.html:50
 msgid "Add group"
 msgstr "Dodaj grupu"
 
-#: templates/schedule/overview.html:54
+#: templates/schedule/overview.html:56
 msgid "Title"
 msgstr "Naslov"
 
-#: templates/schedule/overview.html:55
+#: templates/schedule/overview.html:57
 msgid "Number of members"
 msgstr "Broj članova"
 
-#: templates/schedule/overview.html:56
+#: templates/schedule/overview.html:58
 msgid "Shifts"
 msgstr "Smjene"
 
-#: templates/schedule/overview.html:72
+#: templates/schedule/overview.html:74
 msgid "Add new shift"
 msgstr "Dodaj novu smjenu"
 
-#: templates/schedule/overview.html:74
+#: templates/schedule/overview.html:76
 msgid "Edit group"
 msgstr "Izmjeni grupu"
 
-#: templates/schedule/overview.html:76
+#: templates/schedule/overview.html:78
 msgid "Are you sure you want to delete this group?"
 msgstr "Jeste li sigurni da želite obrisati ovu grupu?"
 
-#: templates/schedule/overview.html:76
+#: templates/schedule/overview.html:78
 msgid "Delete group"
 msgstr "Obriši grupu"
 
@@ -365,7 +373,7 @@ msgstr "Zamjene na čekanju"
 msgid "Your profile was successfully created!"
 msgstr "Vaš profil je uspješno kreiran"
 
-#: views.py:69 views.py:113 views.py:180 views.py:317
+#: views.py:69 views.py:113 views.py:180 views.py:318
 msgid "Please correct the error below."
 msgstr "Molimo vas ispravite pogrešku ispod"
 
@@ -381,67 +389,67 @@ msgstr "Grupa je uspješno dodana!"
 msgid "Group was successfully edited!"
 msgstr "Grupa je uspješno izmjenjena!"
 
-#: views.py:198
+#: views.py:199
 msgid "Group was successfully deleted!"
 msgstr "Grupa je uspješno obrisana!"
 
-#: views.py:200
+#: views.py:201
 msgid "Group was not deleted"
 msgstr "Grupa nije obrisana"
 
-#: views.py:240
+#: views.py:241
 msgid "Shift was not updated!"
 msgstr "Smjena nije uspješno ažurirana"
 
-#: views.py:243
+#: views.py:244
 msgid "Shift was successfully updated!"
 msgstr "Smjena je uspješno ažurirana"
 
-#: views.py:267
+#: views.py:268
 msgid "Shift was successfully deleted!"
 msgstr "Smjena je uspješno obrisana"
 
-#: views.py:269
+#: views.py:270
 msgid "Shift was not deleted"
 msgstr "Smjena nije obrisana"
 
-#: views.py:314
+#: views.py:315
 msgid "Shift was successfully added!"
 msgstr "Smjena je uspješno dodana"
 
-#: views.py:337
+#: views.py:338
 msgid "Swap was successfully confirmed!"
 msgstr "Zamjena je uspješno potvrđena!"
 
-#: views.py:339
+#: views.py:340
 msgid "Swap was not confirmed!"
 msgstr "Zamjena nije potvrđena!"
 
-#: views.py:355
+#: views.py:356
 msgid "Swap was successfully rejected!"
 msgstr "Zamjena nije uspješno odbijena"
 
-#: views.py:357
+#: views.py:358
 msgid "Swap was not rejected!"
 msgstr "Zamjena nije uspješno odbijena"
 
-#: views.py:371
+#: views.py:372
 msgid "Swap was successfully erased!"
 msgstr "Zamjena je uspješno obrisana"
 
-#: views.py:373
+#: views.py:374
 msgid "Swap was not reverted!"
 msgstr "Zamjena je neuspješno poništena"
 
-#: views.py:423
+#: views.py:424
 msgid "Swap was successfully sent!"
 msgstr "Zahtjev za zamjenom je uspješno poslan"
 
-#: views.py:425
+#: views.py:426
 msgid "Swap was not created!"
 msgstr "Kreiranje zamjene je bilo neuspješno!"
 
-#: views.py:428
+#: views.py:429
 msgid "Please correct the error above."
 msgstr "Molimo vas ispravite pogrešku iznad."
 
