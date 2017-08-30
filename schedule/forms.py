@@ -111,7 +111,8 @@ class UserProfileForm(forms.ModelForm):
 class EditUserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-
+        superuser = kwargs.pop("is_superuser")
+        
         super(EditUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_tag = False
@@ -119,7 +120,7 @@ class EditUserForm(forms.ModelForm):
         self.helper.label_class = 'col-sm-4'
         self.helper.field_class = 'col-sm-8'
         self.helper.render_unmentioned_fields = False
-        self.helper.layout = Layout(
+        default_layout = Layout(
             Div(
                 Div(
                     'first_name',
@@ -132,10 +133,25 @@ class EditUserForm(forms.ModelForm):
                 css_class='well the-fieldset row'
             ),
         )
+        element = None
+        if superuser:
+            element = Div(
+                'is_staff',
+                'is_superuser',
+                css_class='col-sm-6'
+            )
+        else:
+            element = Div(
+                Field('is_staff', readonly=True, disabled=True),
+                Field('is_superuser', readonly=True, disabled=True),
+                css_class='col-sm-6'
+            )
+        default_layout[0].insert(1, element)
+        self.helper.layout = default_layout
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name')
+        fields = ('first_name', 'last_name', 'is_staff', 'is_superuser')
 
 
 class GroupForm(forms.ModelForm):

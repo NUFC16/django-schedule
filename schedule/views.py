@@ -45,23 +45,31 @@ def add_user(request):
         HttpResponseForbidden('<h1>Permission denied</h1>')
 
     if request.method == 'POST':
-        user_form = UserForm(
-            request.POST, is_superuser=request.user.is_superuser)
+        user_form = UserForm(request.POST, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_data = user_form.cleaned_data
             profile_data = profile_form.cleaned_data
-            u = User.objects.create_user(
+            u = User.objects.create(
                 username=user_data['username'],
                 first_name=user_data['first_name'],
                 last_name=user_data['last_name'],
                 password=user_data['password1'],
+                is_staff=user_data['is_staff'],
+                is_superuser=user_data['is_superuser'],
             )
             up = User_profile.objects.get(user=u)
-            up.user_groups = profile_data['user_groups']
-            up.user_shift = profile_data['user_shift']
+
+            field_attributes = [
+                "user_groups", "user_shift", "date_of_birth",
+                "date_of_employment", "gender", "default_wage"
+            ]
+
+            for field in field_attributes:
+                setattr(up, field, profile_data[field])
             up.save()
+
             messages.success(request, _(
                 'Your profile was successfully created!'))
             return HttpResponseRedirect(reverse('index'))
@@ -88,10 +96,14 @@ def edit_user(request, employee_id):
     data_user_profile = {
         'user_groups': employee.user_groups.all(),
         'user_shift': employee.user_shift,
+        'date_of_birth': employee.date_of_birth,
+        'date_of_employment': employee.date_of_employment,
+        'gender': employee.gender,
+        'default_wage': employee.default_wage,
     }
 
     if request.method == 'POST':
-        user_form = EditUserForm(request.POST)
+        user_form = EditUserForm(request.POST, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
@@ -102,8 +114,13 @@ def edit_user(request, employee_id):
             employee.user.last_name = user_data['last_name']
             employee.user.save()
 
-            employee.user_groups = profile_data['user_groups']
-            employee.user_shift = profile_data['user_shift']
+            field_attributes = [
+                "user_groups", "user_shift", "date_of_birth",
+                "date_of_employment", "gender", "default_wage"
+            ]
+
+            for field in field_attributes:
+                setattr(employee, field, profile_data[field])
             employee.save()
 
             messages.success(request, _(
@@ -112,7 +129,7 @@ def edit_user(request, employee_id):
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = EditUserForm(instance=employee.user)
+        user_form = EditUserForm(instance=employee.user, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(initial=data_user_profile)
     return render(request, "schedule/add_user.html", {
         "user": request.user.user_profile,

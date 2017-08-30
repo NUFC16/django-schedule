@@ -49,7 +49,7 @@ class Week_shift(models.Model):
         Day_shift, null=True, blank=True, related_name='+')
     sunday = models.ForeignKey(
         Day_shift, null=True, blank=True, related_name='+')
-    week_group = models.ForeignKey(Group, verbose_name=_('Week group'))
+    week_group = models.ForeignKey(Group, verbose_name=_('Group'))
 
     def save(self, *args, **kwargs):
         if self.monday == None:
@@ -264,11 +264,9 @@ class Schedule(models.Model):
 class Swap(models.Model):
     schedule_1 = models.ForeignKey(Schedule, related_name='+')
     schedule_2 = models.ForeignKey(Schedule, related_name='+')
-    # It should not be nullable, this is quickfix
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(User)
     # One user can have more groups so we must define group which swap applies to
-    # It should not be nullable
-    group = models.ForeignKey(Group, null=True)
+    group = models.ForeignKey(Group)
     date = models.DateField()
     permanent = models.BooleanField(default=False)
     # status determines if swap is approved by supervisor
