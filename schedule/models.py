@@ -19,7 +19,7 @@ class Group(models.Model):
             self.old_supervisor = self.supervisor
 
     def get_members(self):
-        return self.user_profile_set.all()
+        return self.user_profile_set.all()    
 
     def __unicode__(self):
         return self.group_name
@@ -120,8 +120,30 @@ class User_profile(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(User_profile, self).__init__(*args, **kwargs)
+        self.pending_requests = False
         if hasattr(self, 'user_shift'):
             self.old_shift = self.user_shift
+
+    def has_pending_requests(self):
+        self.get_pending_groups()
+        return self.pending_requests
+
+    def get_pending_groups(self):
+        temp_groups = []
+        for group in self.user_groups.all():
+            if self.user.is_staff:
+                query_1 = Swap.objects.filter(group=group, resolved=False, receiver_status=True)
+                number = query_1.count()
+            else:
+                query_1 = Swap.objects.filter(group=group, resolved=False, receiver_status=False, schedule_1__user=self)
+                query_2 = Swap.objects.filter(group=group, resolved=False, receiver_status=False, schedule_2__user=self)
+                number = (query_1 | query_2).count()
+
+            if number != 0:
+                self.pending_requests = True
+
+            temp_groups.append((group, number))
+        return temp_groups
 
     def generate_schedule(self):
         today = datetime.datetime.today()

@@ -11,10 +11,7 @@
         <th class="text-center">{% trans "Receiver date" %}</th>
         <th class="text-center">{% trans "Sender shift time" %}</th>
         <th class="text-center">{% trans "Receiver shift time" %}</th>
-
-        {% if user.user.is_staff or user.user.is_superuser %}
-          <th class="text-center">{% trans "Actions" %}</th>
-        {% endif %}
+        <th class="text-center">{% trans "Actions" %}</th>
 
       </tr>
     </thead>
@@ -41,25 +38,35 @@
           </td>
 
 
-          {% if user.user.is_staff or user.user.is_superuser %}
-            <td class="actions-table">
-              {% if resolved %}
-                {% if not swap.schedule_1.is_past and not swap.schedule_2.is_past %}
-                  {% if swap.status %}
-                      <a href="{% url 'revert_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-danger" title="{% trans 'Revert swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
-                  {% else %}
-                    <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Approve swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
-                  {% endif %}
+          <td class="actions-table">
+            {# Resolved swaps #}
+            {% if resolved %}
+              {% if not swap.schedule_1.is_past and not swap.schedule_2.is_past and user.user.is_staff %}
+                {% if swap.status %}
+                    <a href="{% url 'revert_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-danger" title="{% trans 'Revert swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
                 {% else %}
-                  <button type="button" class="btn transparent-bgcolor" disabled><span class="glyphicon glyphicon-lock"></span></button>
-               {% endif %}
-              {% else %}
-                {% if receiver_status %}
-                  <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Confirm swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
+                  <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Approve swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
                 {% endif %}
-                <a href="{% url 'reject_swap_view' group_id=group.pk swap_id=swap.pk %}"><button class="btn btn-danger" title="{% trans 'Reject swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
+              {% else %}
+                <button type="button" class="btn transparent-bgcolor" disabled><span class="glyphicon glyphicon-lock"></span></button>
+             {% endif %}
+            {# Pending swaps #}
+            {% else %}
+              {% if swap.schedule_1.user == request.user.user_profile and not swap.receiver_status %}
+                <a href="{% url 'confirm_receiver_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Confirm swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
               {% endif %}
-            </td>
+              {% if not request.user.is_staff %}
+                <a href="{% url 'reject_receiver_swap_view' group_id=group.pk swap_id=swap.pk %}"><button class="btn btn-danger" title="{% trans 'Reject swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
+              {# if staff or superuser #}
+              {% else %}
+                {# If employees agree #}
+                {% if swap.receiver_status %}
+                  <a href="{% url 'confirm_swap_view' group_id=group.pk swap_id=swap.pk %}"><button type="button" class="btn btn-success" title="{% trans 'Confirm swap' %}"><span class="glyphicon glyphicon-ok"></span></button></a>
+                {% else %}
+                  <a href="{% url 'reject_swap_view' group_id=group.pk swap_id=swap.pk %}"><button class="btn btn-danger" title="{% trans 'Reject swap' %}"><span class="glyphicon glyphicon-remove"></span></button></a>
+              {% endif %}
+            {% endif %}
+          </td>
           {% endif %}
         </tr>
       {% endfor %}

@@ -364,6 +364,37 @@ def add_shift(request):
         "form": form,
     })
 
+@login_required
+def confirm_receiver_swap(request, group_id, swap_id):
+
+    swap = Swap.objects.get(pk=swap_id)
+
+    if swap.schedule_1.user != request.user.user_profile:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    try:
+        swap.receiver_status = True
+        swap.save()
+        messages.success(request, _('Swap was successfully confirmed!'))
+    except:
+        messages.error(request, _('Swap was not confirmed!'))
+
+    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+
+def reject_receiver_swap(request, group_id, swap_id):
+
+    swap = Swap.objects.get(pk=swap_id)
+
+    if swap.schedule_1.user != request.user.user_profile:
+        HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    try:
+        swap.delete()
+        messages.success(request, _('Swap was successfully dropped!'))
+    except:
+        messages.error(request, _('Swap was not dropped!'))
+
+    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
 
 @login_required
 def confirm_swap(request, group_id, swap_id):

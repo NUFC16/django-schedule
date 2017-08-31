@@ -46,10 +46,12 @@
         <li><a href="{% url 'add_user_view' %}">{% trans "Add employee" %}<span class="glyphicon glyphicon-plus divider-left"></span></a></li>
       {% endif %}
       <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">{% trans "Swaps" %}<span class="notification-sign"></span><span class="caret"></span></a>
+        <a class="dropdown-toggle" data-toggle="dropdown" href="">{% trans "Swaps" %}
+        {% if user.has_pending_requests %}<span class="notification-sign"></span>{% endif %}<span class="caret"></span></a>
         <ul class="dropdown-menu">
-          {% for group in user.user_groups.all %}
-            <li><a href="{% url 'swaps_view' group_id=group.pk %}">{{ group }}<span class="notification-number">23</span></a></li>
+          {% for group, notification in user.get_pending_groups %}
+            <li><a href="{% url 'swaps_view' group_id=group.pk %}">{{ group }}
+            {% if notification != 0 %}<span class="notification-number">{{ notification }}</span>{% endif %}</a></li>
           {% endfor %}
         </ul>
       </li>

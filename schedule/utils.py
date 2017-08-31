@@ -55,3 +55,4 @@ def get_pending_swaps(user):
     query_1 = Swap.objects.filter(resolved=False, schedule_1__user=user)
     query_2 = Swap.objects.filter(resolved=False, schedule_2__user=user)
     return query_1 | query_2
+
