@@ -407,25 +407,26 @@ class Swap(models.Model):
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
 
-        #if swap.permanent:
-
-        if sch_1.date != sch_2.date:
-            sch_1.schedule.delete()
-            sch_1.schedule = None
-            obj_1 = Schedule.objects.filter(date=sch_1.date, user=sch_2.user).exclude(schedule=None).first()
-            obj_1.schedule.delete()
-            obj_1.schedule = None
-
-            sch_2.schedule.delete()
-            sch_2.schedule = None
-            obj_2 = Schedule.objects.filter(date=sch_2.date, user=sch_1.user).exclude(schedule=None).first()
-            obj_2.schedule.delete()
-            obj_2.schedule = None
+        if self.permanent:
+            self.save()
         else:
-            sch_1.schedule.delete()
-            sch_1.schedule = None
-            sch_2.schedule.delete()
-            sch_2.schedule = None
+            if sch_1.date != sch_2.date:
+                sch_1.schedule.delete()
+                sch_1.schedule = None
+                obj_1 = Schedule.objects.filter(date=sch_1.date, user=sch_2.user).exclude(schedule=None).first()
+                obj_1.schedule.delete()
+                obj_1.schedule = None
+
+                sch_2.schedule.delete()
+                sch_2.schedule = None
+                obj_2 = Schedule.objects.filter(date=sch_2.date, user=sch_1.user).exclude(schedule=None).first()
+                obj_2.schedule.delete()
+                obj_2.schedule = None
+            else:
+                sch_1.schedule.delete()
+                sch_1.schedule = None
+                sch_2.schedule.delete()
+                sch_2.schedule = None
 
         self.delete()
 
@@ -438,7 +439,6 @@ class Swap(models.Model):
 
             if self.permanent == True:
                 self.make_permanent_swap(sch_1, sch_2)
-
             else:
                 sch_1.user, sch_2.user = sch_2.user, sch_1.user
                 sch_1.save(make_instance=make_instance, is_swap=True)
