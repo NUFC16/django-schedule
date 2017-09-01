@@ -98,6 +98,7 @@ DS = function() {
 
 $( document ).ready(function() {
   $('#id_user_groups').selectpicker();
+
   $('#id_date_of_birth').datepicker({
     changeMonth: true,
     changeYear: true,

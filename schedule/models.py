@@ -19,7 +19,7 @@ class Group(models.Model):
             self.old_supervisor = self.supervisor
 
     def get_members(self):
-        return self.user_profile_set.all()    
+        return self.user_profile_set.all()
 
     def __unicode__(self):
         return self.group_name
@@ -110,11 +110,14 @@ class User_profile(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_groups = models.ManyToManyField(Group, verbose_name=_('User groups'))
-    user_shift = models.ForeignKey(Week_shift, null=True, verbose_name=_('Week shift'))
-    date_of_birth = models.DateField(null=True, blank=True, verbose_name=_('Date of birth'))
+    user_shift = models.ForeignKey(
+        Week_shift, null=True, verbose_name=_('Week shift'))
+    date_of_birth = models.DateField(
+        null=True, blank=True, verbose_name=_('Date of birth'))
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name=_('Gender'))
-    date_of_employment = models.DateField(null=True, blank=True, verbose_name=_('Date of employment'))
+    date_of_employment = models.DateField(
+        null=True, blank=True, verbose_name=_('Date of employment'))
     default_wage = models.DecimalField(
         decimal_places=2, max_digits=5, default=0, blank=True, verbose_name=_('Default wage'))
 
@@ -132,11 +135,14 @@ class User_profile(models.Model):
         temp_groups = []
         for group in self.user_groups.all():
             if self.user.is_staff:
-                query_1 = Swap.objects.filter(group=group, resolved=False, receiver_status=True)
+                query_1 = Swap.objects.filter(
+                    group=group, resolved=False, receiver_status=True)
                 number = query_1.count()
             else:
-                query_1 = Swap.objects.filter(group=group, resolved=False, receiver_status=False, schedule_1__user=self)
-                query_2 = Swap.objects.filter(group=group, resolved=False, receiver_status=False, schedule_2__user=self)
+                query_1 = Swap.objects.filter(
+                    group=group, resolved=False, receiver_status=False, schedule_1__user=self)
+                query_2 = Swap.objects.filter(
+                    group=group, resolved=False, receiver_status=False, schedule_2__user=self)
                 number = (query_1 | query_2).count()
 
             if number != 0:
@@ -154,6 +160,15 @@ class User_profile(models.Model):
                 Schedule.objects.get(date=date, user=self, schedule=None)
             except:
                 Schedule.objects.create(date=date, user=self, schedule=None)
+
+    def regenerate_schedule(self):
+        today = datetime.datetime.today()
+        numdays = 60
+        for x in range(0, numdays):
+            date = today + datetime.timedelta(days=x)
+            obj = Schedule.objects.get(date=date, user=self, schedule=None)
+            obj.delete()
+            Schedule.objects.create(date=date, user=self, schedule=None)
 
     def get_current_working_hours(self):
         month_current = datetime.date.today()
@@ -198,7 +213,7 @@ def update_supervisor(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
+    if notcreated:
         User_profile.objects.create(user=instance)
 
 
@@ -221,6 +236,12 @@ def generate_user_schedule(sender, instance, created, *args, **kwargs):
             schedule.delete()
         instance.generate_schedule()
 
+@receiver(post_save, sender=Week_shift)
+def create_user_profile(sender, instance, created, **kwargs):
+    if not created:
+        people = User_profile.objects.filter(user_shift=instance)
+        for man in people:
+            man.regenerate_schedule()
 
 class Schedule(models.Model):
     schedule = models.ForeignKey(
@@ -287,7 +308,8 @@ class Swap(models.Model):
     schedule_1 = models.ForeignKey(Schedule, related_name='+')
     schedule_2 = models.ForeignKey(Schedule, related_name='+')
     user = models.ForeignKey(User)
-    # One user can have more groups so we must define group which swap applies to
+    # One user can have more groups so we must define group which swap applies
+    # to
     group = models.ForeignKey(Group)
     date = models.DateField()
     permanent = models.BooleanField(default=False)

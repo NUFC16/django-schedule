@@ -99,6 +99,11 @@ def add_user(request):
     else:
         user_form = UserForm(is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm()
+
+    # logged user (must be supervisor) can only assign groups for which he has rights
+    groups = request.user.user_profile.user_groups.all()
+    profile_form.fields["user_groups"].queryset = groups
+    profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(week_group__in=groups)
     return render(request, "schedule/add_user.html", {
         "user": request.user.user_profile,
         "user_form": user_form,
@@ -278,6 +283,7 @@ def shift_view(request, shift_id):
                 setattr(day_object, 'time_from', current_from)
                 setattr(day_object, 'time_until', current_until)
                 day_object.save()
+                shift.save()
             except:
                 messages.error(request, _('Shift was not updated!'))
                 break
