@@ -189,7 +189,9 @@ class ShiftForm(forms.ModelForm):
         self.helper.render_unmentioned_fields = False
         self.helper.layout = Layout(
             'name',
-            'week_group',
+            Field('week_group', readonly=True, disabled=True),
+            # This is needed in order to prevent user from changing group and passing validation
+            Field('week_group', type="hidden"),
         )
 
     class Meta:

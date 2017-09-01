@@ -314,10 +314,12 @@ def delete_shift(request, shift_id):
 
 
 @login_required
-def add_shift(request):
+def add_shift(request, group_id):
     # Dont allow ordinary user to add shifts for certain group
     if not request.user.is_staff or not request.user.is_superuser:
         HttpResponseForbidden('<h1>Permission denied</h1>')
+
+    group = Group.objects.get(pk=group_id)
 
     if request.method == 'POST':
         form = ShiftForm(request.POST)
@@ -343,7 +345,7 @@ def add_shift(request):
                 )
 
             Week_shift.objects.create(
-                name=data['name'],
+                name=data["name"],
                 monday=day_shifts["monday"],
                 tuesday=day_shifts["tuesday"],
                 wednesday=day_shifts["wednesday"],
@@ -351,14 +353,15 @@ def add_shift(request):
                 friday=day_shifts["friday"],
                 saturday=day_shifts["saturday"],
                 sunday=day_shifts["sunday"],
-                week_group=data['week_group']
+                week_group=group
             )
             messages.success(request, _('Shift was successfully added!'))
             return HttpResponseRedirect(reverse('groups_and_people_view'))
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        form = ShiftForm()
+        form = ShiftForm(initial={"week_group": group})
+
     return render(request, "schedule/add_shift.html", {
         "user": request.user.user_profile,
         "form": form,

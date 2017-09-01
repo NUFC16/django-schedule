@@ -76,7 +76,7 @@
         </td>
         <td>
           {# Add new shift #}
-          <a href="{% url 'add_shift_view' %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add new shift' %}">{% trans "Add new shift" %}<span class="glyphicon glyphicon-plus-sign divider-left"></span></button></a>
+          <a href="{% url 'add_shift_view' group_id=group.id %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Add new shift' %}">{% trans "Add new shift" %}<span class="glyphicon glyphicon-plus-sign divider-left"></span></button></a>
           {# Edit group #}
           <a href="{% url 'edit_group_view' group_id=group.id %}"><button class="btn btn-default transparent-bgcolor divider-left" title="{% trans 'Edit group' %}"><span class="glyphicon glyphicon-pencil"></span></button></a>
           {# Delete group #}
@@ -116,6 +116,5 @@
         });
     });
   </script>
-    
 {% endaddtoblock "js" %}
 {% endblock "content" %}
