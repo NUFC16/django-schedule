@@ -100,10 +100,12 @@ def add_user(request):
         user_form = UserForm(is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm()
 
-    # logged user (must be supervisor) can only assign groups for which he has rights
+    # logged user (must be supervisor) can only assign groups for which he has
+    # rights
     groups = request.user.user_profile.user_groups.all()
     profile_form.fields["user_groups"].queryset = groups
-    profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(week_group__in=groups)
+    profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(
+        week_group__in=groups)
     return render(request, "schedule/add_user.html", {
         "user": request.user.user_profile,
         "user_form": user_form,
@@ -159,6 +161,13 @@ def edit_user(request, employee_id):
         user_form = EditUserForm(
             instance=employee.user, is_superuser=request.user.is_superuser)
         profile_form = UserProfileForm(initial=data_user_profile)
+
+    # logged user (must be supervisor) can only assign groups for which he has
+    # rights
+    groups = request.user.user_profile.user_groups.all()
+    profile_form.fields["user_groups"].queryset = groups
+    profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(
+        week_group__in=groups)
     return render(request, "schedule/add_user.html", {
         "user": request.user.user_profile,
         "user_form": user_form,
@@ -282,13 +291,14 @@ def shift_view(request, shift_id):
                 day_object = getattr(shift, day)
                 setattr(day_object, 'time_from', current_from)
                 setattr(day_object, 'time_until', current_until)
+
                 day_object.save()
-                shift.save()
             except:
                 messages.error(request, _('Shift was not updated!'))
                 break
             if day == form_labels[-1][0]:
                 messages.success(request, _('Shift was successfully updated!'))
+                update_default_shift(shift)
 
     events = make_empty_events(shift)
     return render(request, "schedule/shift_view.html", {
@@ -373,6 +383,7 @@ def add_shift(request, group_id):
         "form": form,
     })
 
+
 @login_required
 def confirm_receiver_swap(request, group_id, swap_id):
 
@@ -390,6 +401,7 @@ def confirm_receiver_swap(request, group_id, swap_id):
 
     return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
 
+
 def reject_receiver_swap(request, group_id, swap_id):
 
     swap = Swap.objects.get(pk=swap_id)
@@ -404,6 +416,7 @@ def reject_receiver_swap(request, group_id, swap_id):
         messages.error(request, _('Swap was not dropped!'))
 
     return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+
 
 @login_required
 def confirm_swap(request, group_id, swap_id):
@@ -465,11 +478,11 @@ def swaps(request, group_id):
     if request.user.is_staff or request.user.is_superuser:
         pending_swaps = Swap.objects.filter(resolved=False, group=group)
         resolved_swaps = Swap.objects.filter(
-            resolved=True, group=group)
+            resolved=True, group=group).order_by('-date')
     else:
         pending_swaps = get_pending_swaps(request.user.user_profile)
         resolved_swaps = Swap.objects.filter(
-            resolved=True, group=group, user=request.user)
+            resolved=True, group=group, user=request.user).order_by('-date')
 
     # get all people user is superior and dont show logged user
     employees = User_profile.objects.filter(
@@ -479,7 +492,8 @@ def swaps(request, group_id):
     events_others = make_events(employees, request.user, True)
     # If its supervisor then he can change all shift of his employees
     events_logged = events_others
-    if not request.user.is_staff or not request.user.is_superuser:
+
+    if not request.user.is_staff and not request.user.is_superuser:
         # If its employee he can only swap his shift for someone elses
         events_logged = make_events(
             [request.user.user_profile], request.user, True)

@@ -1,4 +1,4 @@
-from schedule.models import Schedule, Week_shift, Swap
+from schedule.models import Schedule, Week_shift, Swap, User_profile
 from django.core.urlresolvers import reverse
 import datetime
 
@@ -56,3 +56,7 @@ def get_pending_swaps(user):
     query_2 = Swap.objects.filter(resolved=False, schedule_2__user=user)
     return query_1 | query_2
 
+def update_default_shift(shift):
+    people = User_profile.objects.filter(user_shift=shift).distinct()
+    for man in people:
+        man.regenerate_schedule()
