@@ -314,10 +314,6 @@ class Swap(models.Model):
     # receiver_status determines if swap is approved by other emoloyee
     receiver_status = models.BooleanField(default=False)
 
-    def revert(self):
-        self.save(make_instance=False)
-        self.delete()
-
     def update_future_schedules(self, all_sch_1, all_sch_2, diff_days=False, *args, **kwargs):
         if diff_days:
             for sc_1, sc_1b in all_sch_1:
@@ -407,6 +403,32 @@ class Swap(models.Model):
             shift_2.save()
             self.update_future_schedules(all_sch_1, all_sch_2)
 
+    def revert(self):
+        sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
+        sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
+
+        #if swap.permanent:
+
+        if sch_1.date != sch_2.date:
+            sch_1.schedule.delete()
+            sch_1.schedule = None
+            obj_1 = Schedule.objects.filter(date=sch_1.date, user=sch_2.user).exclude(schedule=None).first()
+            obj_1.schedule.delete()
+            obj_1.schedule = None
+
+            sch_2.schedule.delete()
+            sch_2.schedule = None
+            obj_2 = Schedule.objects.filter(date=sch_2.date, user=sch_1.user).exclude(schedule=None).first()
+            obj_2.schedule.delete()
+            obj_2.schedule = None
+        else:
+            sch_1.schedule.delete()
+            sch_1.schedule = None
+            sch_2.schedule.delete()
+            sch_2.schedule = None
+
+        self.delete()
+
     def save(self, make_instance=True, *args, **kwargs):
         # Swap schedules(class) which enables change to be
         # visible in real schedule
@@ -438,18 +460,6 @@ class Swap(models.Model):
                         make_instance=make_instance, is_swap=True)
                     working_shift_2.save(
                         make_instance=make_instance, is_swap=True)
-
-        # save current state if reverse is used
-        if make_instance == False:
-            follow_up_1 = sch_1.schedule
-            sch_1.schedule = None
-            sch_1.save()
-            follow_up_1.delete()
-
-            follow_up_2 = sch_2.schedule
-            sch_2.schedule = None
-            sch_2.save()
-            follow_up_2.delete()
 
         super(Swap, self).save(*args, **kwargs)
 
