@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-02 06:45+0000\n"
+"POT-Creation-Date: 2017-09-02 08:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,6 +48,15 @@ msgid "Picked date is in the past"
 msgstr "Odabrani datum je u prošlosti"
 
 #: forms.py:252
+msgid "Schedules are not in the same week!"
+msgstr "Odabrane smjene se ne nalaze u istom tjednu!"
+
+#: forms.py:253 forms.py:254
+#, python-format
+msgid "Week %(week_num)s"
+msgstr "Tjedan %(week_num)s"
+
+#: forms.py:257
 msgid "Picked shifts are not swapable!"
 msgstr "Odabrane smjene nije moguće zamijeniti"
 
