@@ -213,7 +213,7 @@ def update_supervisor(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if notcreated:
+    if created:
         User_profile.objects.create(user=instance)
 
 
@@ -364,7 +364,8 @@ class Swap(models.Model):
         date_1 = sch_1.date.weekday() + 2
         date_2 = sch_2.date.weekday() + 2
 
-        # this is needed to convert date object to be suitable for django queries
+        # this is needed to convert date object to be suitable for django
+        # queries
         filter_date_1 = date_1 if date_1 < 8 else 1
         filter_date_2 = date_2 if date_2 < 8 else 1
 
@@ -385,7 +386,8 @@ class Swap(models.Model):
         # if days are different
         if sch_1.date != sch_2.date:
             # change days in default week shift
-            self.diff_day_permanent(sch_1, sch_2, shift_1, shift_2, day_1, day_2)
+            self.diff_day_permanent(
+                sch_1, sch_2, shift_1, shift_2, day_1, day_2)
 
             all_sch_11 = Schedule.objects.filter(
                 date__week_day=filter_date_2, date__gte=date_from, user=sch_1.user, schedule=None).order_by('date')
@@ -413,13 +415,15 @@ class Swap(models.Model):
             if sch_1.date != sch_2.date:
                 sch_1.schedule.delete()
                 sch_1.schedule = None
-                obj_1 = Schedule.objects.filter(date=sch_1.date, user=sch_2.user).exclude(schedule=None).first()
+                obj_1 = Schedule.objects.filter(
+                    date=sch_1.date, user=sch_2.user).exclude(schedule=None).first()
                 obj_1.schedule.delete()
                 obj_1.schedule = None
 
                 sch_2.schedule.delete()
                 sch_2.schedule = None
-                obj_2 = Schedule.objects.filter(date=sch_2.date, user=sch_1.user).exclude(schedule=None).first()
+                obj_2 = Schedule.objects.filter(
+                    date=sch_2.date, user=sch_1.user).exclude(schedule=None).first()
                 obj_2.schedule.delete()
                 obj_2.schedule = None
             else:

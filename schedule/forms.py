@@ -248,6 +248,11 @@ class SwapForm(forms.ModelForm):
             if schedule_2.date <= today:
                 self._errors['schedule_2'] = _("Picked date is in the past")
             return False
+        elif schedule_1.date.isocalendar()[1] != schedule_2.date.isocalendar()[1]:
+            self.add_error(None, forms.ValidationError(_("Schedules are not in the same week!"), code='invalid'))
+            self._errors['schedule_1'] = _('Week %(week_num)s') % {'week_num': schedule_1.date.isocalendar()[1]}
+            self._errors['schedule_2'] = _('Week %(week_num)s') % {'week_num': schedule_2.date.isocalendar()[1]}
+            return False
         elif ((schedule_1.time_from != None) or (schedule_2.time_from != None)) and (schedule_1.date != schedule_2.date):
             self.add_error(None, forms.ValidationError(_("Picked shifts are not swapable!"), code='invalid'))
             return False
