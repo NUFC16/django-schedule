@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-02 08:08+0000\n"
+"POT-Creation-Date: 2017-09-03 16:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,24 +39,24 @@ msgstr "Unesite istu lozinku kao iznad"
 msgid "Submit"
 msgstr "Pošalji"
 
-#: forms.py:209 forms.py:211
+#: forms.py:210 forms.py:212
 msgid "Pick a shift!"
 msgstr "Odaberite smjenu!"
 
-#: forms.py:247 forms.py:249
+#: forms.py:248 forms.py:250
 msgid "Picked date is in the past"
 msgstr "Odabrani datum je u prošlosti"
 
-#: forms.py:252
+#: forms.py:254
 msgid "Schedules are not in the same week!"
 msgstr "Odabrane smjene se ne nalaze u istom tjednu!"
 
-#: forms.py:253 forms.py:254
+#: forms.py:255 forms.py:257
 #, python-format
 msgid "Week %(week_num)s"
 msgstr "Tjedan %(week_num)s"
 
-#: forms.py:257
+#: forms.py:262
 msgid "Picked shifts are not swapable!"
 msgstr "Odabrane smjene nije moguće zamijeniti"
 
@@ -100,17 +100,17 @@ msgstr "Datum zaposlenja"
 msgid "Default wage"
 msgstr "Okvirna satnica"
 
-#: models.py:244
+#: models.py:261
 msgid "Parent schedule"
 msgstr "Nadređeni raspored"
+
+#: templates/schedule/add_edit_user.html:12
+msgid "Send"
+msgstr "Pošalji"
 
 #: templates/schedule/add_shift.html:12
 msgid "Create new shift"
 msgstr "Stvori novi smjenu"
-
-#: templates/schedule/add_user.html:12
-msgid "Send"
-msgstr "Pošalji"
 
 #: templates/schedule/base.html:35
 msgid "Home"
@@ -278,7 +278,7 @@ msgid "Employee 2 shift time"
 msgstr "Radno vrijeme 2. smjene"
 
 #: templates/schedule/includes/swap_table.html:14
-#: templates/schedule/overview.html:22 templates/schedule/overview.html:64
+#: templates/schedule/overview.html:23 templates/schedule/overview.html:66
 msgid "Actions"
 msgstr "Akcije"
 
@@ -312,7 +312,7 @@ msgstr "Dodaj korisnika"
 msgid "First and last name"
 msgstr "Ime i prezime"
 
-#: templates/schedule/overview.html:19 templates/schedule/overview.html:52
+#: templates/schedule/overview.html:19 templates/schedule/overview.html:54
 msgid "Groups"
 msgstr "Grupe"
 
@@ -321,50 +321,54 @@ msgid "Employee shift"
 msgstr "Smjena zaposlenika"
 
 #: templates/schedule/overview.html:21
+msgid "Number of hours(last month)"
+msgstr "Broj odrađenih sati (prethodni mjesec)"
+
+#: templates/schedule/overview.html:22
 msgid "Number of hours(month)"
 msgstr "Broj odrađenih sati (mjesec)"
 
-#: templates/schedule/overview.html:40
+#: templates/schedule/overview.html:42
 msgid "Edit user"
 msgstr "Izmjeni korisnika"
 
-#: templates/schedule/overview.html:43
+#: templates/schedule/overview.html:45
 msgid "Are you sure you want to delete this user?"
 msgstr "Jeste li sigurni da želite obrisati ovog korisnika?"
 
-#: templates/schedule/overview.html:43
+#: templates/schedule/overview.html:45
 msgid "Delete user"
 msgstr "Obriši korisnika"
 
-#: templates/schedule/overview.html:55
+#: templates/schedule/overview.html:57
 msgid "Add group"
 msgstr "Dodaj grupu"
 
-#: templates/schedule/overview.html:61
+#: templates/schedule/overview.html:63
 msgid "Title"
 msgstr "Naslov"
 
-#: templates/schedule/overview.html:62
+#: templates/schedule/overview.html:64
 msgid "Number of members"
 msgstr "Broj članova"
 
-#: templates/schedule/overview.html:63
+#: templates/schedule/overview.html:65
 msgid "Shifts"
 msgstr "Smjene"
 
-#: templates/schedule/overview.html:79
+#: templates/schedule/overview.html:81
 msgid "Add new shift"
 msgstr "Dodaj novu smjenu"
 
-#: templates/schedule/overview.html:81
+#: templates/schedule/overview.html:83
 msgid "Edit group"
 msgstr "Izmjeni grupu"
 
-#: templates/schedule/overview.html:83
+#: templates/schedule/overview.html:85
 msgid "Are you sure you want to delete this group?"
 msgstr "Jeste li sigurni da želite obrisati ovu grupu?"
 
-#: templates/schedule/overview.html:83
+#: templates/schedule/overview.html:85
 msgid "Delete group"
 msgstr "Obriši grupu"
 
