@@ -112,7 +112,7 @@ class EditUserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         superuser = kwargs.pop("is_superuser")
-        
+
         super(EditUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_tag = False
@@ -190,7 +190,8 @@ class ShiftForm(forms.ModelForm):
         self.helper.layout = Layout(
             'name',
             Field('week_group', readonly=True, disabled=True),
-            # This is needed in order to prevent user from changing group and passing validation
+            # This is needed in order to prevent user from changing group and
+            # passing validation
             Field('week_group', type="hidden"),
         )
 
@@ -224,7 +225,7 @@ class SwapForm(forms.ModelForm):
 
     def is_valid(self):
         valid = super(SwapForm, self).is_valid()
- 
+
         # we're done now if not valid
         if not valid:
             return valid
@@ -249,12 +250,16 @@ class SwapForm(forms.ModelForm):
                 self._errors['schedule_2'] = _("Picked date is in the past")
             return False
         elif schedule_1.date.isocalendar()[1] != schedule_2.date.isocalendar()[1]:
-            self.add_error(None, forms.ValidationError(_("Schedules are not in the same week!"), code='invalid'))
-            self._errors['schedule_1'] = _('Week %(week_num)s') % {'week_num': schedule_1.date.isocalendar()[1]}
-            self._errors['schedule_2'] = _('Week %(week_num)s') % {'week_num': schedule_2.date.isocalendar()[1]}
+            self.add_error(None, forms.ValidationError(
+                _("Schedules are not in the same week!"), code='invalid'))
+            self._errors['schedule_1'] = _('Week %(week_num)s') % {
+                'week_num': schedule_1.date.isocalendar()[1]}
+            self._errors['schedule_2'] = _('Week %(week_num)s') % {
+                'week_num': schedule_2.date.isocalendar()[1]}
             return False
         elif ((schedule_1.time_from != None) or (schedule_2.time_from != None)) and (schedule_1.date != schedule_2.date):
-            self.add_error(None, forms.ValidationError(_("Picked shifts are not swapable!"), code='invalid'))
+            self.add_error(None, forms.ValidationError(
+                _("Picked shifts are not swapable!"), code='invalid'))
             return False
 
         # all good

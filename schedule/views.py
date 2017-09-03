@@ -106,7 +106,7 @@ def add_user(request):
     profile_form.fields["user_groups"].queryset = groups
     profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(
         week_group__in=groups)
-    return render(request, "schedule/add_user.html", {
+    return render(request, "schedule/add_edit_user.html", {
         "user": request.user.user_profile,
         "user_form": user_form,
         "profile_form": profile_form
@@ -168,7 +168,7 @@ def edit_user(request, employee_id):
     profile_form.fields["user_groups"].queryset = groups
     profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(
         week_group__in=groups)
-    return render(request, "schedule/add_user.html", {
+    return render(request, "schedule/add_edit_user.html", {
         "user": request.user.user_profile,
         "user_form": user_form,
         "profile_form": profile_form,

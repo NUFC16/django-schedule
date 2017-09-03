@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 import datetime
-
+import calendar
 
 class Group(models.Model):
     group_name = models.CharField(max_length=30)
@@ -140,9 +140,9 @@ class User_profile(models.Model):
                 number = query_1.count()
             else:
                 query_1 = Swap.objects.filter(
-                    group=group, resolved=False, receiver_status=False, schedule_1__user=self)
+                    group=group, resolved=False, receiver_status=False, schedule_1__user=self).exclude(user=self.user)
                 query_2 = Swap.objects.filter(
-                    group=group, resolved=False, receiver_status=False, schedule_2__user=self)
+                    group=group, resolved=False, receiver_status=False, schedule_2__user=self).exclude(user=self.user)
                 number = (query_1 | query_2).count()
 
             if number != 0:
@@ -169,6 +169,23 @@ class User_profile(models.Model):
             schedule.time_from = None
             schedule.time_until = None
             schedule.save()
+
+    def get_working_hours(self, month):
+        year = datetime.date.today().year
+        first, last = calendar.monthrange(year, month)
+        first = datetime.datetime(year, month, first)
+        last = datetime.datetime(year, month, last)
+        all_schedules = Schedule.objects.filter(
+            date__range=[first, last], user=self)
+        time_sum = 0
+        for schedule in all_schedules.all():
+            # If schedule is not None
+            if schedule.time_until and schedule.time_from:
+                time_sum += schedule.time_until.hour - schedule.time_from.hour
+        return time_sum
+
+    def get_last_month_hours(self):
+        return self.get_working_hours(datetime.date.today().month - 1)
 
     def get_current_working_hours(self):
         month_current = datetime.date.today()

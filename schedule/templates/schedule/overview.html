@@ -18,6 +18,7 @@
       <th class="text-center">{% trans "First and last name" %}</th>
       <th class="text-center">{% trans "Groups" %}</th>
       <th class="text-center">{% trans "Employee shift" %}</th>
+      <th class="text-center">{% trans "Number of hours(last month)" %}</th>
       <th class="text-center">{% trans "Number of hours(month)" %}</th>
       <th class="text-center">{% trans "Actions" %}</th>
     </tr>
@@ -34,6 +35,7 @@
           {% endfor %}
         </td>
         <td>{{ employee.user_shift }}</td>
+        <td>{{ employee.get_last_month_hours }}</td>
         <td>{{ employee.get_current_working_hours }}</td>
         <td>
           {# Edit user #}
