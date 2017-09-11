@@ -158,7 +158,7 @@ msgstr "Nema dostupnih podataka"
 
 #: templates/schedule/includes/datatables_languages.html:4
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
-msgstr "_START_ - _END_ od _TOTAL_ entries"
+msgstr "_START_ - _END_ od _TOTAL_"
 
 #: templates/schedule/includes/datatables_languages.html:5
 msgid "No results"

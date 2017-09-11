@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'sekizai',
     'crispy_forms',
     'schedule',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
