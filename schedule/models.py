@@ -210,6 +210,10 @@ class User_profile(models.Model):
 def update_supervisor(sender, instance, created, **kwargs):
     # if instance is created and supervisor is changed
     if instance:
+        # Update superusers
+        all_superusers = User.objects.filter(is_superuser=True)
+        for user in all_superusers:
+            user.user_profile.user_groups.add(instance)
         try:
             new_supervisor = User_profile.objects.get(user=instance.supervisor)
         except:

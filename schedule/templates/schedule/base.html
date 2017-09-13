@@ -58,7 +58,7 @@
 {% endblock "navigation" %}       
       </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+      <li><a href="{% url 'logout' %}">{% trans "Logout" %}, {{ user.user.get_full_name }}</a></li>
     </ul>
     </div>
   </div>

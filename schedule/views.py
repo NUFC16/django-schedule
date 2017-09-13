@@ -141,6 +141,8 @@ def edit_user(request, employee_id):
 
             employee.user.first_name = user_data['first_name']
             employee.user.last_name = user_data['last_name']
+            employee.user.is_staff = user_data['is_staff']
+            employee.user.is_superuser = user_data['is_superuser']
             employee.user.save()
 
             field_attributes = [
@@ -234,7 +236,7 @@ def add_and_edit_group(request, group_id=None):
             messages.error(request, _('Please correct the error below.'))
     else:
         form = GroupForm(initial=data)
-
+    form.fields["supervisor"].queryset = User.objects.filter(is_staff=True)
     form.fields["supervisor"].label_from_instance = lambda obj: "%s" % (
         obj.first_name + " " + obj.last_name)
     return render(request, "schedule/add_group.html", {
