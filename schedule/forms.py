@@ -12,11 +12,15 @@ class UserForm(forms.ModelForm):
     error_messages = {
         'password_mismatch': _("The two password fields didn't match."),
     }
-    password1 = forms.CharField(label=_("Password"),
-                                widget=forms.PasswordInput)
-    password2 = forms.CharField(label=_("Password confirmation"),
-                                widget=forms.PasswordInput,
-                                help_text=_("Enter the same password as above, for verification."))
+    password1 = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput
+    )
+    password2 = forms.CharField(
+        label=_("Password confirmation"),
+        widget=forms.PasswordInput,
+        help_text=_("Enter the same password as above, for verification.")
+    )
 
     def __init__(self, *args, **kwargs):
         superuser = kwargs.pop("is_superuser")
@@ -59,8 +63,10 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username',
-                  'is_staff', 'is_superuser')
+        fields = (
+            'first_name', 'last_name', 'username',
+            'is_staff', 'is_superuser'
+        )
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -104,8 +110,10 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = User_profile
-        fields = ('user_groups', 'user_shift', 'date_of_birth',
-                  'date_of_employment', 'gender', 'default_wage')
+        fields = (
+            'user_groups', 'user_shift', 'date_of_birth',
+            'date_of_employment', 'gender', 'default_wage'
+        )
 
 
 class EditUserForm(forms.ModelForm):
@@ -207,9 +215,11 @@ class SwapForm(forms.ModelForm):
         super(SwapForm, self).__init__(*args, **kwargs)
         # Custom error message
         self.fields['schedule_1'].error_messages = {
-            'required': _('Pick a shift!')}
+            'required': _('Pick a shift!')
+        }
         self.fields['schedule_2'].error_messages = {
-            'required': _('Pick a shift!')}
+            'required': _('Pick a shift!')
+        }
 
         # Crispy forms
         self.helper = FormHelper(self)
@@ -257,7 +267,8 @@ class SwapForm(forms.ModelForm):
             self._errors['schedule_2'] = _('Week %(week_num)s') % {
                 'week_num': schedule_2.date.isocalendar()[1]}
             return False
-        elif ((schedule_1.time_from != None) or (schedule_2.time_from != None)) and (schedule_1.date != schedule_2.date):
+        elif ((schedule_1.time_from != None) or (schedule_2.time_from != None)) \
+                and (schedule_1.date != schedule_2.date):
             self.add_error(None, forms.ValidationError(
                 _("Picked shifts are not swapable!"), code='invalid'))
             return False

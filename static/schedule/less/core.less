@@ -1,0 +1,130 @@
+.divider-right {
+  margin-right: 1em;
+}
+
+.divider-left {
+  margin-left: 1em;
+}
+
+.divider-top {
+  margin-top: 1em;
+}
+
+.divider-bottom {
+  margin-bottom: 1em;
+}
+
+.divider-vertical {
+  .divider-top;
+  .divider-bottom;
+}
+
+.divider-horizontal {
+  .divider-left;
+  .divider-right;
+}
+
+.swap-row {
+  .text-center;
+  display: inline-block;
+  background-color: rgb(245, 245, 245);
+  border: 1px solid lightGray;
+  border-radius: 8px;
+  padding: 1em;
+  margin-bottom: 5em;
+}
+
+.swap-user-btn {
+  .btn;
+  .btn-default;
+  width: 15em;
+  height: 54px;
+  resize: none;
+  .divider-horizontal;
+  .divider-vertical;
+}
+
+.swap-arrow {
+  margin-left: 50px;
+  margin-right: 50px;
+  .divider-vertical;
+  .glyphicon;
+  .glyphicon-chevron-right;
+}
+
+.swap-permanent {
+  .divider-vertical;
+  .divider-horizontal;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.swap-submit-btn {
+  .btn;
+  .btn-success;
+  .divider-vertical;
+  .divider-right;
+}
+
+.swap-submit-icon {
+  .glyphicon;
+  .glyphicon-play;
+}
+
+// transparent background
+.transparent-bgcolor {
+  background-color: Transparent;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.vertical-alignment-middle {
+  vertical-align: middle;
+}
+
+.notification-sign {
+  .glyphicon;
+  .glyphicon-exclamation-sign;
+  .divider-left;
+  color:#F4511E;
+}
+
+.notification-number {
+  .badge;
+  .pull-right;
+  background-color: #F4511E;
+}
+
+.modal {
+  .text-center;
+}
+
+@media screen and (min-width: 768px) {
+  .modal:before {
+    display: inline-block;
+    .vertical-alignment-middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  .text-center;
+  vertical-align: middle;
+}
+
+.custom-table {
+  .table; 
+  tbody > tr > td {
+    .vertical-alignment-middle;
+  }
+
+}
+
+.actions-table {
+  white-space: nowrap;
+  display: inline-block;
+}

@@ -2,12 +2,13 @@ from django.db import models
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from django import forms
 
 import datetime
 import calendar
+
 
 class Group(models.Model):
     group_name = models.CharField(max_length=30)
@@ -36,41 +37,56 @@ class Day_shift(models.Model):
 class Week_shift(models.Model):
     name = models.CharField(max_length=30, verbose_name=_('Shift name'))
     monday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     tuesday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     wednesday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     thursday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     friday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     saturday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     sunday = models.ForeignKey(
-        Day_shift, null=True, blank=True, related_name='+')
+        Day_shift, null=True, blank=True, related_name='+'
+    )
     week_group = models.ForeignKey(Group, verbose_name=_('Group'))
 
     def save(self, *args, **kwargs):
-        if self.monday == None:
+        if not self.monday:
             self.monday = Day_shift.objects.create()
-        if self.tuesday == None:
+        if not self.tuesday:
             self.tuesday = Day_shift.objects.create()
-        if self.wednesday == None:
+        if not self.wednesday:
             self.wednesday = Day_shift.objects.create()
-        if self.thursday == None:
+        if not self.thursday:
             self.thursday = Day_shift.objects.create()
-        if self.friday == None:
+        if not self.friday:
             self.friday = Day_shift.objects.create()
-        if self.saturday == None:
+        if not self.saturday:
             self.saturday = Day_shift.objects.create()
-        if self.sunday == None:
+        if not self.sunday:
             self.sunday = Day_shift.objects.create()
 
         super(Week_shift, self).save(*args, **kwargs)
 
     def get_all_days(self):
-        return [self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday, self.sunday]
+        return [
+            self.monday,
+            self.tuesday,
+            self.wednesday,
+            self.thursday,
+            self.friday,
+            self.saturday,
+            self.sunday
+        ]
 
     def get_day(self, x):
         return {
@@ -111,15 +127,34 @@ class User_profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_groups = models.ManyToManyField(Group, verbose_name=_('User groups'))
     user_shift = models.ForeignKey(
-        Week_shift, null=True, verbose_name=_('Week shift'))
+        Week_shift,
+        null=True,
+        verbose_name=_('Week shift')
+    )
     date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name=_('Date of birth'))
+        null=True,
+        blank=True,
+        verbose_name=_('Date of birth')
+    )
     gender = models.CharField(
-        max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name=_('Gender'))
+        max_length=1,
+        choices=GENDER_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name=_('Gender')
+    )
     date_of_employment = models.DateField(
-        null=True, blank=True, verbose_name=_('Date of employment'))
+        null=True,
+        blank=True,
+        verbose_name=_('Date of employment')
+    )
     default_wage = models.DecimalField(
-        decimal_places=2, max_digits=5, default=0, blank=True, verbose_name=_('Default wage'))
+        decimal_places=2,
+        max_digits=5,
+        default=0,
+        blank=True,
+        verbose_name=_('Default wage')
+    )
 
     def __init__(self, *args, **kwargs):
         super(User_profile, self).__init__(*args, **kwargs)
@@ -140,9 +175,17 @@ class User_profile(models.Model):
                 number = query_1.count()
             else:
                 query_1 = Swap.objects.filter(
-                    group=group, resolved=False, receiver_status=False, schedule_1__user=self).exclude(user=self.user)
+                    group=group,
+                    resolved=False,
+                    receiver_status=False,
+                    schedule_1__user=self
+                ).exclude(user=self.user)
                 query_2 = Swap.objects.filter(
-                    group=group, resolved=False, receiver_status=False, schedule_2__user=self).exclude(user=self.user)
+                    group=group,
+                    resolved=False,
+                    receiver_status=False,
+                    schedule_2__user=self
+                ).exclude(user=self.user)
                 number = (query_1 | query_2).count()
 
             if number != 0:
@@ -176,7 +219,8 @@ class User_profile(models.Model):
         first = datetime.datetime(year, month, first)
         last = datetime.datetime(year, month, last)
         all_schedules = Schedule.objects.filter(
-            date__range=[first, last], user=self)
+            date__range=[first, last], user=self
+        )
         time_sum = 0
         for schedule in all_schedules.all():
             # If schedule is not None
@@ -225,7 +269,8 @@ def update_supervisor(sender, instance, created, **kwargs):
         if instance.supervisor != instance.old_supervisor:
             try:
                 old_supervisor = User_profile.objects.get(
-                    user=instance.old_supervisor)
+                    user=instance.old_supervisor
+                )
             except:
                 return
             old_supervisor.user_groups.remove(instance)
@@ -246,10 +291,11 @@ def save_user_profile(sender, instance, **kwargs):
 
 @receiver(post_save, sender=User_profile)
 def generate_user_schedule(sender, instance, created, *args, **kwargs):
-    # If User_profile is not created then then dont generate schedule
+    # If User_profile is not created then then don't generate schedule
     # If user_shift is not changed then dont generate schedule
     # If user shift is set to None then dont generate schedule
-    if not created and (instance.user_shift != instance.old_shift) and instance.user_shift != None:
+    if not created and (instance.user_shift != instance.old_shift) \
+            and instance.user_shift:
         month_current = datetime.date.today()
         schedules_to_remove = Schedule.objects.filter(
             Q(date__gte=month_current), user=instance)
@@ -274,13 +320,14 @@ class Schedule(models.Model):
     def save(self, make_instance=False, is_swap=False, *args, **kwargs):
         # is_swap determines if save is called on swap (this lets us swap free
         # days of users)
-        if (self.time_from == None or self.time_until == None) and self.user.user_shift != None and not is_swap:
+        if (not self.time_from or not self.time_until) \
+                and self.user.user_shift and not is_swap:
             temp_shift = self.user.user_shift.get_day(self.date.weekday())
 
             self.time_from = temp_shift.time_from
             self.time_until = temp_shift.time_until
 
-        if make_instance == True:
+        if make_instance:
             # In case of change - followup
             try:
                 old_schedule = Schedule.objects.get(pk=self.pk)
@@ -299,24 +346,29 @@ class Schedule(models.Model):
 
     def get_time_shift(self):
         if self.time_until:
-            return self.time_from.strftime('%H:%M') + " - " + self.time_until.strftime('%H:%M')
+            return self.time_from.strftime('%H:%M') + \
+                " - " + self.time_until.strftime('%H:%M')
         else:
             return None
 
     def get_string_from(self):
         if self.time_from:
-            return self.date.strftime('%Y-%m-%d') + 'T' + self.time_from.strftime('%H:%M:%S')
+            return self.date.strftime('%Y-%m-%d') + \
+                'T' + self.time_from.strftime('%H:%M:%S')
         else:
             return None
 
     def get_string_until(self):
         if self.time_until:
-            return self.date.strftime('%Y-%m-%d') + 'T' + self.time_until.strftime('%H:%M:%S')
+            return self.date.strftime('%Y-%m-%d') + \
+                'T' + self.time_until.strftime('%H:%M:%S')
         else:
             return None
 
     def __unicode__(self):
-        return 'Schedule ' + self.date.strftime('%m/%d/%Y') + ' ' + self.user.user.first_name + ' ' + self.user.user.last_name + ' ' + str(self.pk)
+        return 'Schedule ' + self.date.strftime('%m/%d/%Y') + \
+            ' ' + self.user.user.first_name + ' ' + \
+            self.user.user.last_name + ' ' + str(self.pk)
 
 
 class Swap(models.Model):
@@ -335,7 +387,8 @@ class Swap(models.Model):
     # receiver_status determines if swap is approved by other emoloyee
     receiver_status = models.BooleanField(default=False)
 
-    def update_future_schedules(self, all_sch_1, all_sch_2, diff_days=False, *args, **kwargs):
+    def update_future_schedules(self, all_sch_1, all_sch_2,
+                                diff_days=False, *args, **kwargs):
         if diff_days:
             for sc_1, sc_1b in all_sch_1:
                 sc_1.time_from = None
@@ -362,7 +415,8 @@ class Swap(models.Model):
                 sc_2.time_until = None
                 sc_2.save()
 
-    def diff_day_permanent(self, sch_1, sch_2, shift_1, shift_2, day_1, day_2, *args, **kwargs):
+    def diff_day_permanent(self, sch_1, sch_2, shift_1,
+                           shift_2, day_1, day_2, *args, **kwargs):
         working_day_1 = shift_1.get_day(sch_2.date.weekday())
         working_day_2 = shift_2.get_day(sch_1.date.weekday())
 
@@ -392,10 +446,18 @@ class Swap(models.Model):
 
         # Filter all schedules so change is visible in the future
         all_sch_1 = Schedule.objects.filter(
-            date__week_day=filter_date_1, date__gte=date_from, user=sch_1.user, schedule=None).order_by('date')
+            date__week_day=filter_date_1,
+            date__gte=date_from,
+            user=sch_1.user,
+            schedule=None
+        ).order_by('date')
 
         all_sch_2 = Schedule.objects.filter(
-            date__week_day=filter_date_2, date__gte=date_from, user=sch_2.user, schedule=None).order_by('date')
+            date__week_day=filter_date_2,
+            date__gte=date_from,
+            user=sch_2.user,
+            schedule=None
+        ).order_by('date')
 
         # Change default Week_shift
         shift_1 = sch_1.user.user_shift
@@ -411,14 +473,25 @@ class Swap(models.Model):
                 sch_1, sch_2, shift_1, shift_2, day_1, day_2)
 
             all_sch_11 = Schedule.objects.filter(
-                date__week_day=filter_date_2, date__gte=date_from, user=sch_1.user, schedule=None).order_by('date')
+                date__week_day=filter_date_2,
+                date__gte=date_from,
+                user=sch_1.user,
+                schedule=None
+            ).order_by('date')
 
             all_sch_22 = Schedule.objects.filter(
-                date__week_day=filter_date_1, date__gte=date_from, user=sch_2.user, schedule=None).order_by('date')
+                date__week_day=filter_date_1,
+                date__gte=date_from,
+                user=sch_2.user,
+                schedule=None
+            ).order_by('date')
 
             # apply changes to default shift
             self.update_future_schedules(
-                zip(all_sch_1, all_sch_11), zip(all_sch_2, all_sch_22), True)
+                zip(all_sch_1, all_sch_11),
+                zip(all_sch_2, all_sch_22),
+                True
+            )
         else:
             shift_1.change_day(sch_1.date.weekday(), day_2)
             shift_1.save()
@@ -437,14 +510,18 @@ class Swap(models.Model):
                 sch_1.schedule.delete()
                 sch_1.schedule = None
                 obj_1 = Schedule.objects.filter(
-                    date=sch_1.date, user=sch_2.user).exclude(schedule=None).first()
+                    date=sch_1.date,
+                    user=sch_2.user
+                ).exclude(schedule=None).first()
                 obj_1.schedule.delete()
                 obj_1.schedule = None
 
                 sch_2.schedule.delete()
                 sch_2.schedule = None
                 obj_2 = Schedule.objects.filter(
-                    date=sch_2.date, user=sch_1.user).exclude(schedule=None).first()
+                    date=sch_2.date,
+                    user=sch_1.user
+                ).exclude(schedule=None).first()
                 obj_2.schedule.delete()
                 obj_2.schedule = None
             else:
@@ -460,9 +537,9 @@ class Swap(models.Model):
         # visible in real schedule
         sch_1 = Schedule.objects.get(pk=self.schedule_1.pk)
         sch_2 = Schedule.objects.get(pk=self.schedule_2.pk)
-        if self.status == True and make_instance == True:
+        if self.status and make_instance:
 
-            if self.permanent == True:
+            if self.permanent:
                 self.make_permanent_swap(sch_1, sch_2)
             else:
                 sch_1.user, sch_2.user = sch_2.user, sch_1.user
@@ -475,10 +552,16 @@ class Swap(models.Model):
                     # here we are swaping working shifts of two users
                     # that way schedule keeps its balance
                     working_shift_1 = Schedule.objects.filter(
-                        user=sch_1.user, date=sch_1.date, schedule=None).exclude(time_from=None)[0]
+                        user=sch_1.user,
+                        date=sch_1.date,
+                        schedule=None
+                    ).exclude(time_from=None)[0]
 
                     working_shift_2 = Schedule.objects.filter(
-                        user=sch_2.user, date=sch_2.date, schedule=None).exclude(time_from=None)[0]
+                        user=sch_2.user,
+                        date=sch_2.date,
+                        schedule=None
+                    ).exclude(time_from=None)[0]
 
                     working_shift_1.user, working_shift_2.user = working_shift_2.user, working_shift_1.user
                     working_shift_1.save(

@@ -5,7 +5,8 @@ from django.core.urlresolvers import resolve
 
 from schedule.models import User_profile, Group, Week_shift, Day_shift, Swap
 from django.contrib.auth.models import User
-from schedule.forms import UserForm, UserProfileForm, EditUserForm, GroupForm, ShiftForm, SwapForm
+from schedule.forms import UserForm, UserProfileForm, EditUserForm, \
+    GroupForm, ShiftForm, SwapForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -92,7 +93,8 @@ def add_user(request):
             up.save()
 
             messages.success(request, _(
-                'Your profile was successfully created!'))
+                'Your profile was successfully created!')
+            )
             return HttpResponseRedirect(reverse('index'))
         else:
             messages.error(request, _('Please correct the error below.'))
@@ -105,7 +107,8 @@ def add_user(request):
     groups = request.user.user_profile.user_groups.all()
     profile_form.fields["user_groups"].queryset = groups
     profile_form.fields["user_shift"].queryset = Week_shift.objects.filter(
-        week_group__in=groups)
+        week_group__in=groups
+    )
     return render(request, "schedule/add_edit_user.html", {
         "user": request.user.user_profile,
         "user_form": user_form,
@@ -155,7 +158,8 @@ def edit_user(request, employee_id):
             employee.save()
 
             messages.success(request, _(
-                'Your profile was successfully updated!'))
+                'Your profile was successfully updated!')
+            )
             return HttpResponseRedirect(reverse('groups_and_people_view'))
         else:
             messages.error(request, _('Please correct the error below.'))
@@ -188,7 +192,8 @@ def groups_and_people(request):
     groups = User_profile.objects.get(user=request.user).user_groups
     # get all people user is superior and dont show logged user
     employees = User_profile.objects.filter(
-        user_groups__in=groups.all(), user__is_superuser=False).distinct().exclude(user=request.user)
+        user_groups__in=groups.all(), user__is_superuser=False
+    ).distinct().exclude(user=request.user)
 
     return render(request, "schedule/overview.html", {
         "user": request.user.user_profile,
@@ -204,7 +209,7 @@ def add_and_edit_group(request, group_id=None):
         HttpResponseForbidden('<h1>Permission denied</h1>')
 
     data = None
-    if group_id != None:
+    if group_id:
         group = Group.objects.get(pk=group_id)
         data = {
             'group_name': group.group_name,
@@ -218,19 +223,25 @@ def add_and_edit_group(request, group_id=None):
             data = form.cleaned_data
 
             # Add group
-            if group_id == None:
+            if not group_id:
                 Group.objects.create(
                     group_name=data['group_name'],
                     supervisor=data['supervisor']
                 )
-                messages.success(request, _('Group was successfully added!'))
+                messages.success(
+                    request,
+                    _('Group was successfully added!')
+                )
                 return HttpResponseRedirect(reverse('groups_and_people_view'))
             # edit group
             else:
                 group.group_name = data['group_name']
                 group.supervisor = data['supervisor']
                 group.save()
-                messages.success(request, _('Group was successfully edited!'))
+                messages.success(
+                    request,
+                    _('Group was successfully edited!')
+                )
                 return HttpResponseRedirect(reverse('groups_and_people_view'))
         else:
             messages.error(request, _('Please correct the error below.'))
@@ -238,7 +249,8 @@ def add_and_edit_group(request, group_id=None):
         form = GroupForm(initial=data)
     form.fields["supervisor"].queryset = User.objects.filter(is_staff=True)
     form.fields["supervisor"].label_from_instance = lambda obj: "%s" % (
-        obj.first_name + " " + obj.last_name)
+        obj.first_name + " " + obj.last_name
+    )
     return render(request, "schedule/add_group.html", {
         "user": request.user.user_profile,
         "form": form,
@@ -283,7 +295,7 @@ def shift_view(request, shift_id):
             current_from = request.POST.get(post_time_from)
             current_until = request.POST.get(post_time_until)
 
-            if current_from != None and current_until != None:
+            if current_from and current_until:
                 current_from = datetime.datetime.strptime(
                     current_from, '%H:%M:%S').time()
                 current_until = datetime.datetime.strptime(
@@ -401,7 +413,9 @@ def confirm_receiver_swap(request, group_id, swap_id):
     except:
         messages.error(request, _('Swap was not confirmed!'))
 
-    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+    return HttpResponseRedirect(
+        reverse('swaps_view', kwargs={"group_id": group_id})
+    )
 
 
 def reject_receiver_swap(request, group_id, swap_id):
@@ -417,7 +431,9 @@ def reject_receiver_swap(request, group_id, swap_id):
     except:
         messages.error(request, _('Swap was not dropped!'))
 
-    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+    return HttpResponseRedirect(
+        reverse('swaps_view', kwargs={"group_id": group_id})
+    )
 
 
 @login_required
@@ -435,7 +451,9 @@ def confirm_swap(request, group_id, swap_id):
     except:
         messages.error(request, _('Swap was not confirmed!'))
 
-    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+    return HttpResponseRedirect(
+        reverse('swaps_view', kwargs={"group_id": group_id})
+    )
 
 
 @login_required
@@ -453,7 +471,9 @@ def reject_swap(request, group_id, swap_id):
     except:
         messages.error(request, _('Swap was not rejected!'))
 
-    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+    return HttpResponseRedirect(
+        reverse('swaps_view', kwargs={"group_id": group_id})
+    )
 
 
 @login_required
@@ -469,7 +489,9 @@ def revert_swap(request, group_id, swap_id):
     except:
         messages.error(request, _('Swap was not reverted!'))
 
-    return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+    return HttpResponseRedirect(
+        reverse('swaps_view', kwargs={"group_id": group_id})
+    )
 
 
 @login_required
@@ -480,15 +502,22 @@ def swaps(request, group_id):
     if request.user.is_staff or request.user.is_superuser:
         pending_swaps = Swap.objects.filter(resolved=False, group=group)
         resolved_swaps = Swap.objects.filter(
-            resolved=True, group=group).order_by('-date')
+            resolved=True,
+            group=group
+        ).order_by('-date')
     else:
         pending_swaps = get_pending_swaps(request.user.user_profile)
         resolved_swaps = Swap.objects.filter(
-            resolved=True, group=group, user=request.user).order_by('-date')
+            resolved=True,
+            group=group,
+            user=request.user
+        ).order_by('-date')
 
     # get all people user is superior and dont show logged user
     employees = User_profile.objects.filter(
-        user_groups=group, user__is_staff=False).exclude(user=request.user)
+        user_groups=group,
+        user__is_staff=False
+    ).exclude(user=request.user)
 
     # True is for free day render
     events_others = make_events(employees, request.user, True)
@@ -523,7 +552,9 @@ def swaps(request, group_id):
                 messages.success(request, _('Swap was successfully sent!'))
             except:
                 messages.error(request, _('Swap was not created!'))
-            return HttpResponseRedirect(reverse('swaps_view', kwargs={"group_id": group_id}))
+            return HttpResponseRedirect(
+                reverse('swaps_view', kwargs={"group_id": group_id})
+            )
         else:
             messages.error(request, _('Please correct the error above.'))
     else:
